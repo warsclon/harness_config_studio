@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "erasableSyntaxOnly": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist",
+    "rewriteRelativeImportExtensions": true,
+    "rootDir": "src",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["node"],
+    "verbatimModuleSyntax": true
+  },
+  "include": ["src/activity-recovery.ts", "src/adapters.ts", "src/cli.ts", "src/index.ts", "src/managed-skill-policy.ts", "src/management.ts", "src/mutation-coordinator.ts", "src/product-version.ts", "src/recoverable-removal.ts", "src/server.ts", "src/system-gateway.ts", "src/web.ts"]
+}

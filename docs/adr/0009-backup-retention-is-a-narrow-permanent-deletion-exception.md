@@ -1,0 +1,3 @@
+# Backup retention is a narrow permanent-deletion exception
+
+Recoverable Removal remains the only way v1 removes Agent Configuration Artifacts, but bounded application data has deliberate exceptions: after a new backup succeeds, Web Management permanently prunes the oldest backup when more than ten exist for that Artifact Identity, and it retains only the latest 1,000 Activity Records. Backup pruning is a Save precondition: if it fails, the original artifact is not modified so the user can repair the Application Data Root and retry. These exceptions are confined to application-managed data under `~/harness_config_studio`; removing an original artifact never removes its backups.

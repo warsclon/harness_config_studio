@@ -1,0 +1,54 @@
+# Harness Config Studio 0.2.6
+
+This is the first public release candidate. The source repository can be
+reviewed before any npm publication, Git tag, or GitHub Release is authorized.
+
+## Added
+
+- Hierarchical Artifact Explorer in three resizable desktop columns, with
+  distinct file/directory icons and explicit one-at-a-time artifact opening.
+- Pointer and keyboard tree navigation, Expand all/Collapse all controls, and
+  complete-name hover tooltips for truncated file or directory names.
+- Native editing for supported UTF-8 text formats up to one MiB.
+- Save Review with validation, exact path, diff, revision checks, backups, and
+  atomic replacement.
+- Finder reveal and recoverable macOS Trash workflows for eligible files,
+  symbolic links, and bounded Managed Skill Directories.
+- Recovery wayfinding, metadata-only Activity Records, post-action Inventory
+  reconciliation, and Stale Inventory retry.
+- `harness-config --version` and a real tarball install/startup smoke gate.
+- In-app Help with workflow guidance and a keyboard shortcut reference, opened
+  from the header or with `?` and closed with `Esc`.
+
+## Changed
+
+- The web launcher is now a human management surface; the CLI remains a
+  read-only Inventory interface.
+- Package version is `0.2.6` while Inventory remains `schemaVersion: 1`.
+- Nested directories start collapsed and preserve session expansion while
+  surviving Inventory refreshes; successful removal selects the nearest visible
+  parent and immediately removes the affected subtree from the view.
+- HTTP failures use one structured, content-free error envelope.
+
+## Security
+
+- Management POST requests require JSON, strict loopback Host and Origin, and a
+  per-process in-memory session capability.
+- Targets are revalidated against the Management Boundary before action.
+- Errors expose only allowlisted scalar technical details and never process
+  output, artifact content, diffs, capabilities, or raw link targets.
+- Save Apply, Reveal, and Recoverable Removal fail closed outside macOS.
+
+## Compatibility
+
+- Compiled ESM JavaScript supports Node.js 22 and 24.
+- Production dependency count remains zero.
+- The UI remains English-only and desktop-only.
+
+## Known limitations
+
+- Finder, Trash, and filesystem mutations are supported only on macOS.
+- The package is not yet published for `npx` installation.
+- There is no in-app restore, undo, backup content browser, or permanent artifact
+  deletion.
+- The app provides no LLM analysis, telemetry, or outbound service integration.

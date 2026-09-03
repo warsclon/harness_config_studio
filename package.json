@@ -1,0 +1,59 @@
+{
+  "name": "harness-config-studio",
+  "version": "0.2.6",
+  "description": "Local CLI and web studio for managing Codex, Claude Code, OpenCode, and Pi configuration artifacts.",
+  "keywords": [
+    "ai-agents",
+    "codex",
+    "claude-code",
+    "opencode",
+    "pi",
+    "configuration"
+  ],
+  "author": "Diego <warsclon@users.noreply.github.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/warsclon/harness_config_studio.git"
+  },
+  "homepage": "https://github.com/warsclon/harness_config_studio#readme",
+  "bugs": {
+    "url": "https://github.com/warsclon/harness_config_studio/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "bin": {
+    "harness-config": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "prebuild": "node scripts/clean-dist.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "postbuild": "node scripts/mark-cli-executable.mjs",
+    "prepack": "npm run build",
+    "start": "node dist/cli.js",
+    "cli": "node dist/cli.js inventory",
+    "web": "node dist/cli.js web",
+    "pretest": "npm run build",
+    "test": "node --test test/*.test.ts",
+    "package:smoke": "node scripts/package-smoke.mjs"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "docs/CLI.md",
+    "VERSIONS.md",
+    "RELEASE_NOTES.md"
+  ],
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "playwright": "^1.62.1",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,3 @@
+# Directory removal requires a bounded preview
+
+V1 permits Recoverable Removal of a Managed Skill Directory only after producing a no-symlink-traversal Removal Preview and receiving confirmation that includes the skill name. The preview includes affected Harness Memberships and is refused above 5,000 entries or 100 MiB, where Web Management offers Finder instead. Immediately before removal, the server repeats the preview and rejects any changed Removal Revision; this bounds scan cost, prevents a superficially small action from hiding an unreviewable tree, and closes the gap between review and action.

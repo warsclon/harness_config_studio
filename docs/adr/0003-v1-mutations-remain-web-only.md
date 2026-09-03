@@ -1,0 +1,3 @@
+# V1 mutations remain web-only
+
+V1 adds explicit editing, saving, System Reveal, and Recoverable Removal to Web Management while the CLI remains an Inventory-only, read-only interface whose `schemaVersion: 1` contract does not gain mutation capabilities. Launching `harness-config` enables the authenticated management web surface without a separate unlock flag, but every mutation still requires an explicit browser action and its safety flow. Keeping mutations out of agent-facing commands and JSON reduces accidental or unattended filesystem changes without blocking deterministic management by a human in the local browser.
