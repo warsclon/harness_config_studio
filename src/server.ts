@@ -180,8 +180,28 @@ function requestHandler(
   const availableApplicationDataAfter = async (warning?: ActivityWarning): Promise<boolean> => (
     !warning && await applicationDataRootAvailable(options.home)
   );
-  return async (request, response) => {
-    const pathname = new URL(request.url ?? "/", `http://${HOST}`).pathname;
+  const handle = async (request: IncomingMessage, response: Parameters<RequestListener>[1]): Promise<void> => {
+    let pathname: string;
+    try {
+      pathname = new URL(request.url ?? "/", `http://${HOST}`).pathname;
+    } catch {
+      managementError(response, 400, "request-invalid", "The request URL is invalid.", "route");
+      return;
+    }
+    const action = pathname === "/api/management/artifacts/open" ? "open-artifact"
+        : pathname === "/api/management/saves/review" ? "review-save"
+        : pathname === "/api/management/saves/apply" ? "apply-save"
+        : pathname === "/api/management/reveal" ? "system-reveal"
+        : pathname === "/api/management/removals/preview" ? "recoverable-removal"
+        : pathname === "/api/management/removals/apply" ? "recoverable-removal"
+        : pathname === "/api/management/trash/open" ? "open-trash"
+        : pathname === "/api/management/inventory/refresh" ? "refresh-inventory"
+        : undefined;
+    const expectedHost = `${HOST}:${request.socket.localPort ?? ""}`;
+    if (request.headers.host !== expectedHost) {
+      managementError(response, 403, "host-invalid", "The request Host is not allowed.", action ?? "route");
+      return;
+    }
     if (pathname === "/") {
       if (request.method !== "GET") {
         managementError(response, 405, "method-not-allowed", "Method not allowed.", "load-shell");
@@ -190,6 +210,8 @@ function requestHandler(
       response.writeHead(200, {
         "content-type": "text/html; charset=utf-8",
         "cache-control": "no-store",
+        "content-security-policy": "frame-ancestors 'none'",
+        "x-frame-options": "DENY",
       });
       response.end(renderWebShell(
         sessionCapability,
@@ -212,15 +234,6 @@ function requestHandler(
       return;
     }
     if (pathname.startsWith("/api/management/")) {
-      const action = pathname === "/api/management/artifacts/open" ? "open-artifact"
-        : pathname === "/api/management/saves/review" ? "review-save"
-        : pathname === "/api/management/saves/apply" ? "apply-save"
-        : pathname === "/api/management/reveal" ? "system-reveal"
-        : pathname === "/api/management/removals/preview" ? "recoverable-removal"
-        : pathname === "/api/management/removals/apply" ? "recoverable-removal"
-        : pathname === "/api/management/trash/open" ? "open-trash"
-        : pathname === "/api/management/inventory/refresh" ? "refresh-inventory"
-        : undefined;
       if (!action) {
         managementError(response, 404, "route-not-found", "Management route not found.");
         return;
@@ -230,11 +243,6 @@ function requestHandler(
         return;
       }
 
-      const expectedHost = `${HOST}:${request.socket.localPort ?? ""}`;
-      if (request.headers.host !== expectedHost) {
-        managementError(response, 403, "host-invalid", "The request Host is not allowed.", action);
-        return;
-      }
       if (request.headers.origin !== `http://${expectedHost}`) {
         managementError(response, 403, "origin-invalid", "The request Origin is not allowed.", action);
         return;
@@ -452,6 +460,16 @@ function requestHandler(
       return;
     }
     managementError(response, 404, "route-not-found", "Route not found.", "route");
+  };
+  return (request, response) => {
+    void handle(request, response).catch(() => {
+      if (response.destroyed || response.writableEnded) return;
+      if (response.headersSent) {
+        response.destroy();
+        return;
+      }
+      managementError(response, 500, "request-failed", "The request could not be completed.", "route");
+    });
   };
 }
 

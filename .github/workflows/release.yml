@@ -1,0 +1,112 @@
+name: Prepare or publish npm release
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Full 40-character source commit to validate
+        required: true
+        type: string
+      publish:
+        description: Publish after qualification and approval in the npm-publish environment
+        default: false
+        type: boolean
+      approved_sha256:
+        description: SHA-256 from the previously qualified tarball (required to publish)
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release intent
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+          PUBLISH: ${{ inputs.publish }}
+          APPROVED_SHA256: ${{ inputs.approved_sha256 }}
+          PUBLISH_ENABLED: ${{ vars.NPM_PUBLISH_ENABLED }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          node --input-type=module - <<'JS'
+          import assert from 'node:assert/strict';
+          assert.match(process.env.SOURCE_COMMIT, /^[a-f0-9]{40}$/);
+          if (process.env.PUBLISH === 'true') {
+            assert.equal(process.env.REPOSITORY, 'warsclon/harness_config_studio');
+            assert.equal(process.env.PUBLISH_ENABLED, 'true', 'Complete maintainer setup before enabling publication');
+            assert.match(process.env.APPROVED_SHA256, /^[a-f0-9]{64}$/);
+          }
+          JS
+
+  validate:
+    needs: preflight
+    uses: ./.github/workflows/ci.yml
+    with:
+      source_ref: ${{ inputs.commit }}
+      retain_artifacts: true
+
+  inspect:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.commit }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: candidate-node-*
+          path: candidates
+      - name: Reconcile the two tested artifacts
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+          APPROVED_SHA256: ${{ inputs.approved_sha256 }}
+        run: |
+          node scripts/verify-release.mjs candidates/candidate-node-22 "$SOURCE_COMMIT" ${APPROVED_SHA256:+"$APPROVED_SHA256"}
+          node scripts/verify-release.mjs candidates/candidate-node-24 "$SOURCE_COMMIT" ${APPROVED_SHA256:+"$APPROVED_SHA256"}
+          node --input-type=module - <<'JS'
+          import assert from 'node:assert/strict';
+          import {readFileSync, appendFileSync} from 'node:fs';
+          const a = JSON.parse(readFileSync('candidates/candidate-node-22/evidence.json'));
+          const b = JSON.parse(readFileSync('candidates/candidate-node-24/evidence.json'));
+          assert.equal(a.tarball.sha256, b.tarball.sha256, 'Node matrices produced different packages');
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, `Validated ${b.package.name}@${b.package.version}\n\nCommit: ${b.source.commit}\n\nSHA-256: ${b.tarball.sha256}\n\nReal Finder/Trash and public reporting must be qualified separately before approval.\n`);
+          JS
+
+  publish:
+    if: ${{ inputs.publish }}
+    needs: inspect
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.commit }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - run: npm install --global npm@11
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: candidate-node-24
+          path: candidate
+      - name: Publish only the approved bytes
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+          APPROVED_SHA256: ${{ inputs.approved_sha256 }}
+        run: |
+          tarball=$(node scripts/verify-release.mjs candidate "$SOURCE_COMMIT" "$APPROVED_SHA256")
+          npm publish "$tarball" --access public --ignore-scripts

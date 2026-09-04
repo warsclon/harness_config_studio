@@ -16,7 +16,8 @@ The npm package has not been published yet, so installation by package name and
 ## Requirements and local use
 
 - macOS for Finder, Trash, and filesystem mutations.
-- Node.js 22 or 24.
+- Tested on Node.js 22 and 24. The package accepts Node.js >=22; other majors
+  have not been qualified for this release.
 - A desktop browser. The UI is English-only and desktop-only.
 
 ```bash
@@ -123,7 +124,14 @@ npm run package:smoke
 The suite uses real temporary filesystems, loopback HTTP, the compiled CLI, and
 Chromium. Finder and Trash are replaced with a narrow fake in automated tests;
 the release smoke packs a real tarball, validates its allowlist, installs it in
-a temporary directory, and exercises version/help/Inventory/web startup without
-performing mutations.
+a temporary directory, and exercises version/help/Inventory/web startup and
+controlled fixture mutations. It tests the installed executable and offline package
+execution. Automated checks never operate on personal configuration or the real
+Finder/Trash integration.
+
+To retain the tested tarball and its SHA-256/evidence, run
+`npm run package:smoke -- --retain-dir release-artifacts`. The output directory
+must not already exist. See [the release procedure](docs/RELEASING.md) and
+[security reporting status](SECURITY.md).
 
 Harness Config Studio is available under the [MIT License](LICENSE).

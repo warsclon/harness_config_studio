@@ -4,6 +4,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+    inputs:
+      source_ref:
+        type: string
+        required: true
+      retain_artifacts:
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -17,6 +25,8 @@ jobs:
         node-version: [22, 24]
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_ref || github.sha }}
       - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
@@ -26,4 +36,11 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm test
-      - run: npm run package:smoke
+      - run: npm run package:smoke -- --retain-dir release-artifacts
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: ${{ inputs.retain_artifacts }}
+        with:
+          name: candidate-node-${{ matrix.node-version }}
+          path: release-artifacts/
+          if-no-files-found: error
+          retention-days: 14

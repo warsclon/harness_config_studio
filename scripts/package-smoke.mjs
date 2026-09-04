@@ -1,14 +1,18 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawn, spawnSync } from "node:child_process";
-import { mkdir, mkdtemp, readFile, realpath, rename, rm, stat, symlink, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, realpath, rename, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { basename, join } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { terminateChild } from "./process-lifecycle.mjs";
 
 const root = process.cwd();
+const args = process.argv.slice(2);
+assert.ok(args.length === 0 || (args.length === 2 && args[0] === "--retain-dir" && args[1]),
+  "Usage: package-smoke.mjs [--retain-dir NEW_DIRECTORY]");
+const retainDirectory = args[1] ? resolve(args[1]) : undefined;
 const temporaryRoot = await mkdtemp(join(tmpdir(), "harness-config-package-smoke-"));
 const sourceManifest = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
 const expectedVersion = sourceManifest.version;
@@ -101,6 +105,8 @@ try {
   const packedFiles = packReport[0].files.map((entry) => entry.path).sort();
   assert.ok(packedFiles.includes("package.json"));
   assert.ok(packedFiles.includes("LICENSE"));
+  assert.ok(packedFiles.includes("SECURITY.md"));
+  assert.ok(packedFiles.includes("docs/RELEASING.md"));
   assert.ok(packedFiles.includes("README.md"));
   assert.ok(packedFiles.includes("docs/CLI.md"));
   assert.ok(packedFiles.includes("VERSIONS.md"));
@@ -109,7 +115,7 @@ try {
   for (const path of packedFiles) {
     assert.match(
       path,
-      /^(?:package\.json|LICENSE|README\.md|VERSIONS\.md|RELEASE_NOTES\.md|docs\/CLI\.md|dist\/.*\.(?:js|d\.ts|js\.map))$/,
+      /^(?:package\.json|LICENSE|README\.md|SECURITY\.md|VERSIONS\.md|RELEASE_NOTES\.md|docs\/(?:CLI|RELEASING)\.md|dist\/.*\.(?:js|d\.ts|js\.map))$/,
       `unexpected packaged path: ${path}`,
     );
   }
@@ -144,6 +150,18 @@ try {
   const cliPath = join(installRoot, "node_modules", "harness-config-studio", "dist", "cli.js");
   assert.ok((await stat(cliPath)).mode & 0o111, "installed CLI must retain an executable mode");
   const environment = { ...process.env, HOME: home };
+  const executable = spawnSync(join(installRoot, "node_modules", ".bin", "harness-config"), ["--version"], {
+    cwd: installRoot, env: environment, encoding: "utf8",
+  });
+  assertSuccessful(executable, "installed executable");
+  assert.equal(executable.stdout, `${expectedVersion}\n`);
+  assert.equal(executable.stderr, "");
+  const offline = runNpm(["exec", "--offline", "--prefix", installRoot, "--", "harness-config", "--version"], {
+    cwd: installRoot, env: environment,
+  });
+  assertSuccessful(offline, "offline installed package execution");
+  assert.equal(offline.stdout, `${expectedVersion}\n`);
+  assert.equal(offline.stderr, "");
   assert.equal(runInstalledCli(cliPath, ["--version"], environment), `${expectedVersion}\n`);
   assert.match(
     runInstalledCli(cliPath, ["--help"], environment),
@@ -274,6 +292,22 @@ try {
   }
 
   const revision = spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).stdout.trim() || "unavailable";
+  if (retainDirectory) {
+    const status = spawnSync("git", ["status", "--porcelain", "--untracked-files=normal"], { cwd: root, encoding: "utf8" });
+    const evidence = {
+      schemaVersion: 1,
+      package: { name: sourceManifest.name, version: expectedVersion },
+      source: { commit: revision, clean: status.status === 0 && status.stdout.trim() === "" },
+      tarball: { file: basename(tarball), sha256: tarballSha256 },
+      runtime: { node: process.version, platform: process.platform, arch: process.arch },
+      checks: { installedExecutable: true, offlineExec: true, installedBrowser: true, realFinderTrash: false },
+    };
+    await mkdir(retainDirectory, { recursive: false });
+    await copyFile(tarball, join(retainDirectory, evidence.tarball.file));
+    assert.equal(createHash("sha256").update(await readFile(join(retainDirectory, evidence.tarball.file))).digest("hex"), tarballSha256);
+    await writeFile(join(retainDirectory, "evidence.json"), `${JSON.stringify(evidence, null, 2)}\n`, { flag: "wx" });
+    process.stdout.write(`Retained tested candidate: ${retainDirectory}\n`);
+  }
   process.stdout.write([
     `Package smoke passed: packed, allowlisted, installed, browser-exercised, and isolated (sha256 ${tarballSha256}).`,
     `Candidate evidence: package ${sourceManifest.name}@${expectedVersion}; revision ${revision}; runtime ${process.version} (${process.platform}/${process.arch}).`,

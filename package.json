@@ -40,8 +40,9 @@
     "cli": "node dist/cli.js inventory",
     "web": "node dist/cli.js web",
     "pretest": "npm run build",
-    "test": "node --test test/*.test.ts",
-    "package:smoke": "node scripts/package-smoke.mjs"
+    "test": "node --test test/*.test.ts && npm run test:package",
+    "package:smoke": "node scripts/package-smoke.mjs",
+    "test:package": "node --test test/package/*.test.ts"
   },
   "files": [
     "dist",
@@ -49,7 +50,9 @@
     "README.md",
     "docs/CLI.md",
     "VERSIONS.md",
-    "RELEASE_NOTES.md"
+    "RELEASE_NOTES.md",
+    "SECURITY.md",
+    "docs/RELEASING.md"
   ],
   "devDependencies": {
     "@types/node": "^26.4.0",
