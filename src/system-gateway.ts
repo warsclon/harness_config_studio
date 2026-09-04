@@ -89,14 +89,13 @@ const TRASH_JXA = `
 ObjC.import("Foundation");
 function run(argv) {
   const source = $.NSURL.fileURLWithPath(argv[0]);
-  const resulting = Ref();
-  const failure = Ref();
-  const moved = $.NSFileManager.defaultManager.trashItemAtURLResultingItemURLError(source, resulting, failure);
+  // Optional Objective-C out parameters crash when dereferenced through JXA on
+  // some macOS versions, even after a successful move. Only the BOOL is needed.
+  const moved = $.NSFileManager.defaultManager.trashItemAtURLResultingItemURLError(source, null, null);
   if (!moved) {
-    const problem = failure[0];
-    throw new Error(problem ? ObjC.unwrap(problem.localizedDescription) : "Trash operation failed");
+    throw new Error("Trash operation failed");
   }
-  return resulting[0] ? ObjC.unwrap(resulting[0].path) : "";
+  return "";
 }
 `;
 

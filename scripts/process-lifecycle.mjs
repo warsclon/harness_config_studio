@@ -37,7 +37,7 @@ export async function terminateChild(child, options = {}) {
       forcedTimer = setTimeout(() => {
         if (hasExited(child)) finish();
         else finish(new Error("Timed out waiting for packaged web server to terminate."));
-      }, Math.min(timeoutMs, 1_000));
+      }, 1_000);
     }, timeoutMs);
 
     if (hasExited(child)) {
