@@ -126,8 +126,9 @@ Chromium. Finder and Trash are replaced with a narrow fake in automated tests;
 the release smoke packs a real tarball, validates its allowlist, installs it in
 a temporary directory, and exercises version/help/Inventory/web startup and
 controlled fixture mutations. It tests the installed executable and offline package
-execution. Automated checks never operate on personal configuration or the real
-Finder/Trash integration.
+execution. Automated checks never move personal configuration. A macOS-only
+regression calls the real Trash bridge with a missing fixture; successful native
+Finder/Trash operations are checked separately during release qualification.
 
 To retain the tested tarball and its SHA-256/evidence, run
 `npm run package:smoke -- --retain-dir release-artifacts`. The output directory
