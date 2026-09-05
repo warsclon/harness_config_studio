@@ -15,7 +15,7 @@ test("a Managed Skill Directory is reviewed without following links and moved af
   const skillsRoot = join(home, ".agents", "skills");
   const skillDirectory = join(skillsRoot, "review-me");
   const external = join(fixtureRoot, "external");
-  const backup = join(home, "harness_config_studio", "backups", "sentinel.bak");
+  const backup = join(home, ".harness_config_studio", "backups", "sentinel.bak");
   const intents: Array<{ path: string; targetKind: string }> = [];
   let openTrashCalls = 0;
   const systemGateway = {
@@ -33,7 +33,7 @@ test("a Managed Skill Directory is reviewed without following links and moved af
     await mkdir(external, { recursive: true });
     await mkdir(workspace, { recursive: true });
     await mkdir(trash, { recursive: true });
-    await mkdir(join(home, "harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
+    await mkdir(join(home, ".harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
     await writeFile(join(skillDirectory, "SKILL.md"), "# Review me\n");
     await writeFile(join(skillDirectory, "assets", "example.json"), "{\"ok\":true}\n");
     await writeFile(join(external, "MUST_NOT_APPEAR.txt"), "EXTERNAL_SECRET");
@@ -465,7 +465,7 @@ test("directory removal holds a subtree mutation scope against a descendant Save
       assert.equal((await save.json()).error.code, "artifact-changed");
       assert.equal(await readFile(join(trash, "locked", "settings.toml"), "utf8"), "enabled = true\n");
       assert.equal((await lstat(visibleLink)).isSymbolicLink(), true);
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       releaseTrash();
       await api.dispose();
@@ -481,7 +481,7 @@ test("a directory Trash gateway failure leaves the whole tree and backups unchan
   const home = join(fixtureRoot, "home");
   const workspace = join(fixtureRoot, "workspace");
   const skillDirectory = join(home, ".agents", "skills", "keep-me");
-  const backup = join(home, "harness_config_studio", "backups", "sentinel.bak");
+  const backup = join(home, ".harness_config_studio", "backups", "sentinel.bak");
   const intents: Array<{ path: string; targetKind: string }> = [];
   const systemGateway = {
     async reveal(): Promise<void> {},
@@ -495,7 +495,7 @@ test("a directory Trash gateway failure leaves the whole tree and backups unchan
   try {
     await mkdir(skillDirectory, { recursive: true });
     await mkdir(workspace, { recursive: true });
-    await mkdir(join(home, "harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
+    await mkdir(join(home, ".harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
     await writeFile(join(skillDirectory, "SKILL.md"), "# Keep me\n");
     await writeFile(backup, "BACKUP_SENTINEL");
     const canonicalSkill = await realpath(skillDirectory);

@@ -119,7 +119,7 @@ preserved without parsing or reformatting.
 
 Saving requires an explicit diff review, an unchanged byte revision, a retained
 backup, and an atomic same-directory replacement. Backups and a metadata-only
-Activity Record live under the owner-only `~/harness_config_studio` Application
+Activity Record live under the owner-only `~/.harness_config_studio` Application
 Data Root. Recovery is delegated to Finder; there is no in-app restore.
 
 Eligible files, symbolic links, and bounded Managed Skill Directories can be

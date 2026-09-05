@@ -44,7 +44,7 @@ test("eleven accepted saves retain the newest ten Artifact Backups for only that
     const canonicalHome = await realpath(home);
     const artifactIdentity = join(canonicalHome, ".codex", "AGENTS.md");
     const otherIdentity = join(canonicalHome, ".codex", "AGENTS.override.md");
-    const backupRoot = join(canonicalHome, "harness_config_studio", "backups");
+    const backupRoot = join(canonicalHome, ".harness_config_studio", "backups");
     const identityRoot = join(backupRoot, sha256(artifactIdentity));
     const otherIdentityRoot = join(backupRoot, sha256(otherIdentity));
     const running = await startServer({ home, workspace, preferredPort: 0, strictPort: true });
@@ -111,7 +111,7 @@ test("the first accepted save creates a private deterministic zero-byte Artifact
       await openGlobalMarkdown(page, "AGENTS.md");
       const result = await saveCurrentMarkdown(page, "# First content\n");
 
-      const dataRoot = join(home, "harness_config_studio");
+      const dataRoot = join(home, ".harness_config_studio");
       const backupRoot = join(dataRoot, "backups");
       const identityRoot = join(backupRoot, identityKey);
       const backupPath = join(identityRoot, `${revision}.bak`);
@@ -149,7 +149,7 @@ test("retrying an interrupted replacement reuses the matching Artifact Backup", 
     await writeFile(artifactPath, original, { mode: 0o640 });
     const originalDirectoryMode = (await stat(artifactDirectory)).mode & 0o7777;
     const artifactIdentity = join(await realpath(home), ".codex", "AGENTS.md");
-    const identityRoot = join(home, "harness_config_studio", "backups", sha256(artifactIdentity));
+    const identityRoot = join(home, ".harness_config_studio", "backups", sha256(artifactIdentity));
     const backupPath = join(identityRoot, `${sha256(original)}.bak`);
     const running = await startServer({ home, workspace, preferredPort: 0, strictPort: true });
     const browser = await chromium.launch({ headless: true });
@@ -218,7 +218,7 @@ test("Save recovers either half of an interrupted Artifact Backup publication", 
         await writeFile(artifactPath, original, { mode: 0o640 });
         const artifactIdentity = join(await realpath(home), ".codex", "AGENTS.md");
         const revision = sha256(original);
-        const identityRoot = join(home, "harness_config_studio", "backups", sha256(artifactIdentity));
+        const identityRoot = join(home, ".harness_config_studio", "backups", sha256(artifactIdentity));
         const backupPath = join(identityRoot, `${revision}.bak`);
         const metadataPath = join(identityRoot, `${revision}.json`);
         const interruptedAt = "2026-08-31T12:00:00.000Z";
@@ -278,7 +278,7 @@ test("a corrupt oldest backup makes retention fail closed before replacing the a
     await mkdir(workspace, { recursive: true });
     await writeFile(artifactPath, states[0]!, { mode: 0o640 });
     const artifactIdentity = join(await realpath(home), ".codex", "AGENTS.md");
-    const identityRoot = join(home, "harness_config_studio", "backups", sha256(artifactIdentity));
+    const identityRoot = join(home, ".harness_config_studio", "backups", sha256(artifactIdentity));
     const oldestPath = join(identityRoot, `${sha256(states[0]!)}.bak`);
     const running = await startServer({ home, workspace, preferredPort: 0, strictPort: true });
     const browser = await chromium.launch({ headless: true });
@@ -339,7 +339,7 @@ test("a failure before backup publication does not prune any retained backup", a
     await mkdir(workspace, { recursive: true });
     await writeFile(artifactPath, states[0]!, { mode: 0o640 });
     const artifactIdentity = join(await realpath(home), ".codex", "AGENTS.md");
-    const identityRoot = join(home, "harness_config_studio", "backups", sha256(artifactIdentity));
+    const identityRoot = join(home, ".harness_config_studio", "backups", sha256(artifactIdentity));
     const blockedBackupPath = join(identityRoot, `${sha256(states[10]!)}.bak`);
     const running = await startServer({ home, workspace, preferredPort: 0, strictPort: true });
     const browser = await chromium.launch({ headless: true });

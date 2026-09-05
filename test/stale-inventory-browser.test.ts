@@ -482,7 +482,7 @@ test("a successful Save stays authoritative when refresh fails and Retry only re
       assert.equal(payload.reconciliation.status, "stale");
       assert.equal(payload.reconciliation.lastPublishedGeneration, 1);
       assert.equal(payload.reconciliation.error.code, "inventory-refresh-failed");
-      const activity = JSON.parse(await readFile(join(home, "harness_config_studio", "activity.json"), "utf8")) as {
+      const activity = JSON.parse(await readFile(join(home, ".harness_config_studio", "activity.json"), "utf8")) as {
         records: Array<{ action: string; result: { status: string } }>;
       };
       assert.deepEqual(activity.records.map(({ action, result }) => ({ action, status: result.status })), [

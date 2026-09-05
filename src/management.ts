@@ -184,7 +184,7 @@ function finderStatus(code: FinderGatewayError["code"]): number {
 export async function applicationDataRootAvailable(home: string): Promise<boolean> {
   const canonicalHome = await realpath(home).catch(() => undefined);
   if (!canonicalHome) return false;
-  const info = await lstat(join(canonicalHome, "harness_config_studio")).catch(() => undefined);
+  const info = await lstat(join(canonicalHome, ".harness_config_studio")).catch(() => undefined);
   return Boolean(info?.isDirectory()
     && !info.isSymbolicLink()
     && (info.mode & 0o7777) === 0o700
@@ -205,7 +205,7 @@ export async function revealManagedLocation(
     if (!canonicalHome) {
       throw new ManagementError(404, "reveal-target-not-found", "The Application Data Root does not exist.");
     }
-    const path = join(canonicalHome, "harness_config_studio");
+    const path = join(canonicalHome, ".harness_config_studio");
     const info = await lstat(path).catch(() => undefined);
     if (!info) {
       throw new ManagementError(404, "reveal-target-not-found", "The Application Data Root does not exist.", { path });
@@ -785,7 +785,7 @@ async function enforceBackupLimit(
 }
 
 async function createBackup(home: string, state: ArtifactState): Promise<{ path: string; reused: boolean; createdAt: string }> {
-  const dataRoot = join(home, "harness_config_studio");
+  const dataRoot = join(home, ".harness_config_studio");
   const backupRoot = join(dataRoot, "backups");
   const artifactRoot = join(backupRoot, sha256(state.artifactIdentity));
   await ensurePrivateApplicationDirectory(dataRoot);
@@ -1016,7 +1016,7 @@ export function createManagement(request: InventoryRequest, coordinator: Mutatio
             artifactIdentity: state.artifactIdentity,
             backupPath: backup.path,
             backupReference: {
-              relativePath: relative(join(request.home, "harness_config_studio"), backup.path),
+              relativePath: relative(join(request.home, ".harness_config_studio"), backup.path),
               editRevision: review.editRevision,
               createdAt: backup.createdAt,
               reused: backup.reused,

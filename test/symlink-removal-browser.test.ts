@@ -15,7 +15,7 @@ test("an in-boundary symbolic link is reviewed and moved without touching its ta
   const trash = join(fixtureRoot, "Trash");
   const targetPath = join(globalRoot, "shared target.md");
   const linkPath = join(globalRoot, "AGENTS.md");
-  const backupSentinel = join(home, "harness_config_studio", "backups", "sentinel.bak");
+  const backupSentinel = join(home, ".harness_config_studio", "backups", "sentinel.bak");
   const targetBytes = Buffer.from("# TARGET_SECRET\n", "utf8");
   const intents: Array<{ path: string; targetKind: string }> = [];
   const systemGateway = {
@@ -32,7 +32,7 @@ test("an in-boundary symbolic link is reviewed and moved without touching its ta
     await mkdir(globalRoot, { recursive: true });
     await mkdir(workspace, { recursive: true });
     await mkdir(trash, { recursive: true });
-    await mkdir(join(home, "harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
+    await mkdir(join(home, ".harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
     await writeFile(targetPath, targetBytes, { mode: 0o440 });
     await symlink("shared target.md", linkPath);
     await writeFile(backupSentinel, "BACKUP_SENTINEL", { mode: 0o600 });
@@ -85,7 +85,7 @@ test("an in-boundary symbolic link is reviewed and moved without touching its ta
       assert.equal(afterTarget.mode, beforeTarget.mode);
       assert.deepEqual(await readFile(targetPath), targetBytes);
       assert.equal(await readFile(backupSentinel, "utf8"), "BACKUP_SENTINEL");
-      assert.deepEqual(await readdir(join(home, "harness_config_studio", "backups")), ["sentinel.bak"]);
+      assert.deepEqual(await readdir(join(home, ".harness_config_studio", "backups")), ["sentinel.bak"]);
     } finally {
       await browser.close();
       await running.close();
@@ -154,7 +154,7 @@ test("an out-of-boundary target stays opaque while its visible symbolic link rem
       assert.equal(afterTarget.mode, beforeTarget.mode);
       await chmod(targetPath, 0o400);
       assert.deepEqual(await readFile(targetPath), targetBytes);
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       await browser.close();
       await running.close();
@@ -229,7 +229,7 @@ test("a broken symbolic link is reviewed as one link and moved without inventing
       assert.equal((await lstat(join(trash, "config.toml"))).isSymbolicLink(), true);
       assert.equal(await readlink(join(trash, "config.toml")), rawLinkTarget);
       await assert.rejects(lstat(linkPath));
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       await browser.close();
       await running.close();
@@ -309,7 +309,7 @@ test("retargeted and replaced links reject their one-shot review without reachin
       assert.equal((await lstat(linkPath)).isFile(), true);
       assert.equal(await readFile(targetPath, "utf8"), targetSecret);
       assert.equal(trashCalls, 0);
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       await api.dispose();
       await running.close();
@@ -369,7 +369,7 @@ test("target-only changes do not invalidate a symbolic-link removal review", asy
       assert.equal((await lstat(join(trash, "AGENTS.md"))).isSymbolicLink(), true);
       assert.equal(await readFile(targetPath, "utf8"), "newest external target state\n");
       assert.equal((await stat(targetPath)).mode & 0o7777, 0o600);
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       await api.dispose();
       await running.close();
@@ -452,7 +452,7 @@ test("a Trash gateway failure leaves the link target and existing backups unchan
   const globalRoot = join(home, ".codex");
   const linkPath = join(globalRoot, "AGENTS.md");
   const targetPath = join(globalRoot, "target.md");
-  const backupSentinel = join(home, "harness_config_studio", "backups", "sentinel.bak");
+  const backupSentinel = join(home, ".harness_config_studio", "backups", "sentinel.bak");
   const intents: Array<{ path: string; targetKind: string }> = [];
   const systemGateway = {
     async reveal(): Promise<void> {},
@@ -468,7 +468,7 @@ test("a Trash gateway failure leaves the link target and existing backups unchan
   try {
     await mkdir(globalRoot, { recursive: true });
     await mkdir(workspace, { recursive: true });
-    await mkdir(join(home, "harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
+    await mkdir(join(home, ".harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
     await writeFile(targetPath, "target remains exact\n", { mode: 0o400 });
     await symlink("target.md", linkPath);
     await writeFile(backupSentinel, "BACKUP_SENTINEL", { mode: 0o600 });
@@ -505,7 +505,7 @@ test("a Trash gateway failure leaves the link target and existing backups unchan
       assert.equal(afterTarget.mode, beforeTarget.mode);
       assert.equal(await readFile(targetPath, "utf8"), "target remains exact\n");
       assert.equal(await readFile(backupSentinel, "utf8"), "BACKUP_SENTINEL");
-      assert.deepEqual(await readdir(join(home, "harness_config_studio", "backups")), ["sentinel.bak"]);
+      assert.deepEqual(await readdir(join(home, ".harness_config_studio", "backups")), ["sentinel.bak"]);
     } finally {
       await browser.close();
       await running.close();
@@ -590,7 +590,7 @@ test("link removal serializes with Save on the same Artifact Identity", async ()
       assert.deepEqual(intents, [{ path: artifactIdentity, targetKind: "symbolic-link" }]);
       assert.equal((await lstat(join(trash, "AGENTS.md"))).isSymbolicLink(), true);
       assert.equal(await readFile(targetPath, "utf8"), "# Original target\n");
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       releaseTrash();
       await api.dispose();

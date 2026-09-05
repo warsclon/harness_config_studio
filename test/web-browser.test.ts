@@ -222,14 +222,14 @@ test("Markdown editing stays browser-local and exposes a dirty editor state", as
       assert.match(await review.getByTestId("save-diff").innerText(), /Keep this safe\./);
       assert.match(await review.getByTestId("save-diff").innerText(), /Keep this safer\./);
       assert.equal(await readFile(agentsPath, "utf8"), original);
-      await assert.rejects(stat(join(home, "harness_config_studio")));
+      await assert.rejects(stat(join(home, ".harness_config_studio")));
 
       await review.getByRole("button", { name: "Confirm save" }).click();
       await page.getByTestId("editor-status").getByText("Saved", { exact: true }).waitFor();
       const saved = "# Instructions\n\nKeep this safer.\n\t";
       assert.equal(await readFile(agentsPath, "utf8"), saved);
       assert.equal((await stat(agentsPath)).mode & 0o7777, originalMode);
-      const backupRoot = join(home, "harness_config_studio", "backups");
+      const backupRoot = join(home, ".harness_config_studio", "backups");
       const backupEntries = await readdir(backupRoot, { recursive: true });
       const backups = backupEntries.filter((entry) => entry.endsWith(".bak"));
       assert.equal(backups.length, 1);
@@ -442,7 +442,7 @@ test("authenticated save endpoints enforce view-only authorization at Review and
   const projectRoot = join(workspace, "project");
   const policyRoot = join(projectRoot, ".agents", "skills", "policy");
   const artifactPath = join(policyRoot, "protected.txt");
-  const applicationDataRoot = join(home, "harness_config_studio");
+  const applicationDataRoot = join(home, ".harness_config_studio");
   const original = "ORIGINAL_SECRET\n";
 
   try {
@@ -841,7 +841,7 @@ test("Save Review rejects artifacts whose bytes, existence, type, or permissions
           assert.equal(await readFile(agentsPath, "utf8"), original);
           assert.equal((await stat(agentsPath)).mode & 0o7777, 0o600);
         }
-        await assert.rejects(stat(join(home, "harness_config_studio")));
+        await assert.rejects(stat(join(home, ".harness_config_studio")));
       } finally {
         await browser.close();
         await running.close();
@@ -959,7 +959,7 @@ test("saving a Markdown symlink preserves the link, target mode, CRLF bytes, and
       assert.equal((await lstat(artifactPath)).isSymbolicLink(), true);
       assert.deepEqual(await readFile(targetPath), saved);
       assert.equal((await stat(targetPath)).mode & 0o7777, 0o640);
-      const backupRoot = join(home, "harness_config_studio", "backups");
+      const backupRoot = join(home, ".harness_config_studio", "backups");
       const backupEntries = await readdir(backupRoot, { recursive: true });
       const backup = backupEntries.find((entry) => entry.endsWith(".bak"));
       assert.ok(backup);
@@ -986,7 +986,7 @@ test("save rejects a symbolic-link Application Data Root without touching the ar
     await mkdir(workspace, { recursive: true });
     await mkdir(outside);
     await writeFile(agentsPath, original);
-    await symlink(outside, join(home, "harness_config_studio"));
+    await symlink(outside, join(home, ".harness_config_studio"));
     const running = await startServer({ home, workspace, preferredPort: 0, strictPort: true });
     const browser = await chromium.launch({ headless: true });
 
@@ -1009,7 +1009,7 @@ test("save rejects a symbolic-link Application Data Root without touching the ar
       assert.doesNotMatch(body, /Original|Must not save/);
       assert.equal(await readFile(agentsPath, "utf8"), original);
       assert.deepEqual(await readdir(outside), []);
-      assert.equal((await lstat(join(home, "harness_config_studio"))).isSymbolicLink(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio"))).isSymbolicLink(), true);
     } finally {
       await browser.close();
       await running.close();

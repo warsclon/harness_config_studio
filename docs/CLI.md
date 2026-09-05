@@ -60,3 +60,6 @@ shortcut guide without affecting editor state.
 macOS is required for Finder, Trash, Save Apply, and Removal Apply. Those
 actions fail closed on other operating systems; the Inventory command remains
 read-only and portable within the supported Node.js runtime.
+
+Existing backups in `~/harness_config_studio` remain untouched. New backups and
+activity records use `~/.harness_config_studio`. There is no automatic migration.

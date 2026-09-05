@@ -187,7 +187,7 @@ export function createActivityRecovery(home: string) {
 
   async function canonicalRoot(create: boolean): Promise<string | null> {
     const canonicalHome = await realpath(home);
-    const root = join(canonicalHome, "harness_config_studio");
+    const root = join(canonicalHome, ".harness_config_studio");
     if (!create && !(await entry(root))) return null;
     await ensurePrivateDirectory(root);
     return root;

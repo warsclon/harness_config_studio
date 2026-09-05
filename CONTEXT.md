@@ -99,7 +99,7 @@ result, and diff for a Pending Edit before the user authorizes a save.
 _Avoid_: Save prompt, autosave
 
 **Artifact Backup**:
-A pre-save snapshot stored under `~/harness_config_studio/backups` and associated
+A pre-save snapshot stored under `~/.harness_config_studio/backups` and associated
 with the Artifact Identity and Edit Revision it protects. V1 retains at most ten
 per artifact and reuses a matching backup when an interrupted Save is retried.
 _Avoid_: Temporary file, autosave copy
@@ -135,7 +135,7 @@ It never contains artifact content.
 _Avoid_: Telemetry, audit event, log message
 
 **Application Data Root**:
-The owner-only `~/harness_config_studio` directory containing Artifact Backups
+The owner-only `~/.harness_config_studio` directory containing Artifact Backups
 and the bounded Activity Record file. It is not a Global Root and is never
 included in Inventory.
 _Avoid_: Configuration root, cache, application support

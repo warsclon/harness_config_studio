@@ -13,7 +13,7 @@ test("a clean inventoried file is confirmed by exact path and moved through the 
   const workspace = join(fixtureRoot, "workspace");
   const trash = join(fixtureRoot, "Trash");
   const artifactPath = join(home, ".codex", "AGENTS.md");
-  const backupPath = join(home, "harness_config_studio", "backups", "sentinel.bak");
+  const backupPath = join(home, ".harness_config_studio", "backups", "sentinel.bak");
   const intents: Array<{ path: string; targetKind: string }> = [];
   let openTrashCalls = 0;
   const systemGateway = {
@@ -31,7 +31,7 @@ test("a clean inventoried file is confirmed by exact path and moved through the 
     await mkdir(join(home, ".codex"), { recursive: true });
     await mkdir(workspace, { recursive: true });
     await mkdir(trash, { recursive: true });
-    await mkdir(join(home, "harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
+    await mkdir(join(home, ".harness_config_studio", "backups"), { recursive: true, mode: 0o700 });
     await writeFile(artifactPath, "# Fixture instructions\n", { mode: 0o400 });
     await writeFile(backupPath, "BACKUP_SENTINEL");
     const artifactIdentity = join(await realpath(home), ".codex", "AGENTS.md");
@@ -371,7 +371,7 @@ test("Removal consumes its review once and shares the Artifact Identity lock wit
       assert.equal((await save.json()).error.code, "artifact-changed");
       assert.equal(trashCalls, 1);
       assert.equal(await readFile(join(trash, "AGENTS.md"), "utf8"), "# Original\n");
-      assert.equal((await lstat(join(home, "harness_config_studio", "activity.json"))).isFile(), true);
+      assert.equal((await lstat(join(home, ".harness_config_studio", "activity.json"))).isFile(), true);
     } finally {
       releaseTrash();
       await api.dispose();

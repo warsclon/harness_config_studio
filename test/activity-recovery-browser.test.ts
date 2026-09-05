@@ -31,7 +31,7 @@ test("System Reveal appends one private metadata-only Activity Record", async ()
       await page.getByRole("button", { name: "Reveal config.toml in Finder" }).click();
       await page.getByText("Asked Finder to select config.toml.", { exact: true }).waitFor();
 
-      const dataRoot = join(await realpath(home), "harness_config_studio");
+      const dataRoot = join(await realpath(home), ".harness_config_studio");
       const activityPath = join(dataRoot, "activity.json");
       const raw = await readFile(activityPath, "utf8");
       const document = JSON.parse(raw) as { schemaVersion: number; records: unknown[] };
@@ -52,7 +52,7 @@ test("System Reveal appends one private metadata-only Activity Record", async ()
       const appDataReveal = page.getByTestId("reveal-application-data");
       assert.equal(await appDataReveal.count(), 1);
       await appDataReveal.click();
-      await page.getByText("Asked Finder to open harness_config_studio.", { exact: true }).waitFor();
+      await page.getByText("Asked Finder to open .harness_config_studio.", { exact: true }).waitFor();
       assert.deepEqual(intents.at(-1), { disposition: "open-directory", path: dataRoot });
 
       const corrupt = "{CORRUPT_ACTIVITY_SENTINEL";
@@ -107,10 +107,10 @@ test("Save exposes and reveals the latest validated backup without browsing its 
       assert.equal((await recovery.innerText()).includes(original.trim()), false);
       await recovery.getByRole("button", { name: "Reveal backup in Finder" }).click();
       await page.getByText("Asked Finder to select latest backup.", { exact: true }).waitFor();
-      const expectedBackupPath = join(await realpath(home), "harness_config_studio", payload.backupReference.relativePath);
+      const expectedBackupPath = join(await realpath(home), ".harness_config_studio", payload.backupReference.relativePath);
       assert.deepEqual(intents, [{ disposition: "select-item", path: expectedBackupPath }]);
 
-      const activity = JSON.parse(await readFile(join(home, "harness_config_studio", "activity.json"), "utf8")) as { records: Array<Record<string, unknown>> };
+      const activity = JSON.parse(await readFile(join(home, ".harness_config_studio", "activity.json"), "utf8")) as { records: Array<Record<string, unknown>> };
       assert.equal(activity.records.length, 2);
       assert.equal(activity.records[0]?.action, "save");
       assert.deepEqual(activity.records[0]?.backupReference, payload.backupReference);
@@ -160,7 +160,7 @@ test("a failed Save Apply records one metadata-only failure outcome", async () =
       assert.equal(response.status(), 409);
       assert.equal((await response.json()).error.code, "artifact-changed");
 
-      const raw = await readFile(join(home, "harness_config_studio", "activity.json"), "utf8");
+      const raw = await readFile(join(home, ".harness_config_studio", "activity.json"), "utf8");
       const document = JSON.parse(raw) as { records: Array<Record<string, unknown>> };
       assert.equal(document.records.length, 1);
       assert.deepEqual(document.records[0], {
@@ -190,7 +190,7 @@ test("Activity retention keeps the newest 1,000 records by append order", async 
     await mkdir(workspace, { recursive: true });
     await writeFile(artifactPath, "model='x'\n");
     const artifactIdentity = join(await realpath(home), ".codex", "config.toml");
-    const dataRoot = join(home, "harness_config_studio");
+    const dataRoot = join(home, ".harness_config_studio");
     await mkdir(dataRoot, { mode: 0o700 });
     const records = Array.from({ length: 1_000 }, (_, index) => ({
       time: "2026-01-01T00:00:00.000Z",
@@ -232,7 +232,7 @@ test("a legacy Activity Record with an unknown nested field is preserved byte-fo
     await mkdir(workspace, { recursive: true });
     await writeFile(artifactPath, "model='x'\n");
     const artifactIdentity = join(await realpath(home), ".codex", "config.toml");
-    const dataRoot = join(home, "harness_config_studio");
+    const dataRoot = join(home, ".harness_config_studio");
     await mkdir(dataRoot, { mode: 0o700 });
     const legacy = `${JSON.stringify({
       schemaVersion: 1,
@@ -354,7 +354,7 @@ test("an unsafe Activity Journal warns without changing successful Save or Trash
     await mkdir(workspace, { recursive: true });
     await writeFile(savePath, "# Original\n", { mode: 0o600 });
     await writeFile(removalPath, "model='x'\n", { mode: 0o600 });
-    const dataRoot = join(home, "harness_config_studio");
+    const dataRoot = join(home, ".harness_config_studio");
     await mkdir(join(dataRoot, "activity.json"), { recursive: true, mode: 0o700 });
     const running = await startServer({ home, workspace, preferredPort: 0, strictPort: true, systemGateway });
     const browser = await chromium.launch({ headless: true });
@@ -463,7 +463,7 @@ test("file, symbolic-link, and Managed Skill Directory removals record only meta
       assert.deepEqual(results.map((result) => result.status), [200, 200, 200]);
       assert.deepEqual(intents.map((intent) => intent.targetKind), ["file", "symbolic-link", "managed-skill-directory"]);
       assert.equal(await readFile(targetPath, "utf8"), "PRIVATE_TARGET_CONTENT");
-      const raw = await readFile(join(home, "harness_config_studio", "activity.json"), "utf8");
+      const raw = await readFile(join(home, ".harness_config_studio", "activity.json"), "utf8");
       const document = JSON.parse(raw) as { records: Array<{ action: string; targetKind: string; subject: { artifactIdentity: string } }> };
       assert.deepEqual(document.records.map(({ action, targetKind, subject }) => ({ action, targetKind, identity: subject.artifactIdentity })), [
         { action: "recoverable-removal", targetKind: "file", identity: identities[0] },
@@ -508,7 +508,7 @@ test("concurrent management outcomes are serialized without losing Activity Reco
         }));
       }, { artifactIdentity });
       assert.deepEqual(statuses, Array(16).fill(200));
-      const document = JSON.parse(await readFile(join(home, "harness_config_studio", "activity.json"), "utf8")) as { records: unknown[] };
+      const document = JSON.parse(await readFile(join(home, ".harness_config_studio", "activity.json"), "utf8")) as { records: unknown[] };
       assert.equal(document.records.length, 16);
     } finally {
       await browser.close();

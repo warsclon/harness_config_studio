@@ -1249,7 +1249,7 @@ export function renderWebShell(
     });
     function bindApplicationDataReveal() {
       applicationDataReveal?.addEventListener("click", () => {
-        revealTarget({ kind: "application-data-root" }, "harness_config_studio");
+        revealTarget({ kind: "application-data-root" }, ".harness_config_studio");
       });
     }
 

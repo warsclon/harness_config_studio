@@ -43,7 +43,7 @@ test("System Reveal selects an inventoried file at its visible Artifact Identity
       await page.goto(running.url);
       await page.locator('#app[data-state="ready"]').waitFor();
       assert.equal(await page.getByTestId("reveal-application-data").count(), 0);
-      await assert.rejects(lstat(join(await realpath(home), "harness_config_studio")));
+      await assert.rejects(lstat(join(await realpath(home), ".harness_config_studio")));
       await page.getByRole("heading", { name: "Global configuration" }).click();
       await page.getByRole("button", { name: /\.codex.*Global Root/i }).click();
 
@@ -132,12 +132,12 @@ test("System Reveal opens Managed Skill Directories and an existing Application 
   try {
     await mkdir(join(home, ".agents", "skills", "my-skill", "assets"), { recursive: true });
     await mkdir(join(home, ".agents", "skills", ".hidden"), { recursive: true });
-    await mkdir(join(home, "harness_config_studio"), { recursive: true, mode: 0o700 });
+    await mkdir(join(home, ".harness_config_studio"), { recursive: true, mode: 0o700 });
     await mkdir(join(workspace, "too", "deep"), { recursive: true });
     await writeFile(join(home, ".agents", "skills", "my-skill", "SKILL.md"), "# Test skill");
     const canonicalHome = await realpath(home);
     const skillPath = join(canonicalHome, ".agents", "skills", "my-skill");
-    const appDataPath = join(canonicalHome, "harness_config_studio");
+    const appDataPath = join(canonicalHome, ".harness_config_studio");
     const running = await startServer({
       home,
       workspace,
@@ -162,7 +162,7 @@ test("System Reveal opens Managed Skill Directories and an existing Application 
 
       await rm(workspace, { recursive: true, force: true });
       await page.getByTestId("reveal-application-data").click();
-      await page.getByText("Asked Finder to open harness_config_studio.", { exact: true }).waitFor();
+      await page.getByText("Asked Finder to open .harness_config_studio.", { exact: true }).waitFor();
       await mkdir(workspace, { recursive: true });
 
       const managedResponses = await page.evaluate(async ({ skillPath }) => {

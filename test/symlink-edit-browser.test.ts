@@ -76,7 +76,7 @@ test("saving an in-boundary symbolic link preserves the link and attributes its 
       assert.deepEqual(await readFile(targetPath), saved);
       assert.equal((await stat(targetPath)).mode & 0o7777, 0o640);
 
-      const identityRoot = join(home, "harness_config_studio", "backups", sha256(artifactIdentity));
+      const identityRoot = join(home, ".harness_config_studio", "backups", sha256(artifactIdentity));
       const backupPath = join(identityRoot, `${editRevision}.bak`);
       const metadataPath = join(identityRoot, `${editRevision}.json`);
       assert.deepEqual(await readFile(backupPath), original);
@@ -94,7 +94,7 @@ test("saving an in-boundary symbolic link preserves the link and attributes its 
         mode: 0o640,
         byteLength: original.length.toString(),
       });
-      await assert.rejects(readdir(join(home, "harness_config_studio", "backups", sha256(resolvedPath))));
+      await assert.rejects(readdir(join(home, ".harness_config_studio", "backups", sha256(resolvedPath))));
     } finally {
       await browser.close();
       await running.close();
@@ -114,7 +114,7 @@ test("link and target physical identity changes reject Save without leaking cont
   const replacementPath = join(globalRoot, "replacement.md");
   const original = "ORIGINAL_LINK_TARGET_SECRET\n";
   const pending = "PENDING_BROWSER_SECRET\n";
-  const applicationDataRoot = join(home, "harness_config_studio");
+  const applicationDataRoot = join(home, ".harness_config_studio");
 
   try {
     await mkdir(globalRoot, { recursive: true });
@@ -251,7 +251,7 @@ test("two visible aliases of one target serialize Save and prevent a lost update
       assert.equal((await lstat(secondLink)).isSymbolicLink(), true);
       assert.equal(await winner.loserPage.getByRole("textbox", { name: "Artifact content" }).inputValue(), winner.identity === firstIdentity ? secondEdit : firstEdit);
 
-      const backupRoot = join(home, "harness_config_studio", "backups");
+      const backupRoot = join(home, ".harness_config_studio", "backups");
       const identityRoots = await readdir(backupRoot);
       assert.deepEqual(identityRoots, [sha256(winner.identity)]);
       assert.deepEqual((await readdir(join(backupRoot, identityRoots[0]!))).sort(), [
@@ -285,7 +285,7 @@ test("retry after target replacement failure reuses the same backup and symlink 
     await symlink(relative(globalRoot, targetPath), artifactPath);
     const targetDirectoryMode = (await stat(targetDirectory)).mode & 0o7777;
     const artifactIdentity = join(await realpath(home), ".codex", "AGENTS.md");
-    const identityRoot = join(home, "harness_config_studio", "backups", sha256(artifactIdentity));
+    const identityRoot = join(home, ".harness_config_studio", "backups", sha256(artifactIdentity));
     const backupPath = join(identityRoot, `${sha256(original)}.bak`);
     const metadataPath = join(identityRoot, `${sha256(original)}.json`);
     const openedLink = await lstat(artifactPath, { bigint: true });
@@ -393,7 +393,7 @@ test("symlink target disappearance type bytes and retarget conflicts never recre
         assert.equal(JSON.parse(body).error.code, "artifact-changed", changed);
         assert.doesNotMatch(body, /ORIGINAL_TARGET_SECRET|PENDING_TARGET_SECRET|EXTERNAL_TARGET_SECRET/);
         assert.equal(await editor.inputValue(), pending);
-        await assert.rejects(lstat(join(home, "harness_config_studio")));
+        await assert.rejects(lstat(join(home, ".harness_config_studio")));
         if (changed === "bytes") assert.equal(await readFile(targetPath, "utf8"), external);
         if (changed === "missing") await assert.rejects(lstat(targetPath));
         if (changed === "type") assert.equal((await lstat(targetPath)).isDirectory(), true);
