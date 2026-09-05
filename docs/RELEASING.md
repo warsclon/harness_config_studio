@@ -8,10 +8,10 @@ version. Never overwrite an already published npm version.
 
 ## Current status
 
-The release workflow is prepared locally. The public repository, remote CI,
-private security-reporting form, npm ownership/authentication and actual publication
-have not been verified. Do not describe any of these as available merely because
-this procedure or a workflow exists.
+The source repository is public and GitHub Private Vulnerability Reporting is
+enabled. Remote CI and the Pages deployment are being qualified. The npm release
+workflow is prepared, but npm ownership/authentication and actual publication have
+not been verified. Source publication is not npm availability.
 
 ## Prepare and qualify
 
