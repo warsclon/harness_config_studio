@@ -1,4 +1,5 @@
 name: Prepare or publish npm release
+run-name: npm candidate ${{ inputs.commit }} (publish=${{ inputs.publish }})
 
 on:
   workflow_dispatch:
