@@ -24,10 +24,11 @@ From this checkout, run `npm ci`, then `npx playwright install chromium` for bro
 checks, and `npm run site:preview` to open the presentation and demo locally.
 The command prints a loopback URL. No deployment is performed.
 
-GitHub Pages deployment is prepared but has not run. Its intended address is
-`https://warsclon.github.io/harness_config_studio/`; add the live demo link here
-once that deployment has been verified. The images above resolve after this
-repository is published. They remain available under `docs/media/` locally.
+**[Try the live demo →](https://warsclon.github.io/harness_config_studio/)**
+— no installation, fictional data, read-only.
+
+See [presentation maintenance](https://github.com/warsclon/harness_config_studio/blob/main/docs/PRESENTATION.md)
+for media regeneration and GitHub Pages deployment.
 
 ## Application
 

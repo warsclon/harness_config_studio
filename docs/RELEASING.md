@@ -9,7 +9,8 @@ version. Never overwrite an already published npm version.
 ## Current status
 
 The source repository is public and GitHub Private Vulnerability Reporting is
-enabled. Remote CI and the Pages deployment are being qualified. The npm release
+enabled. The presentation and read-only demo are available on
+[GitHub Pages](https://warsclon.github.io/harness_config_studio/). The npm release
 workflow is prepared, but npm ownership/authentication and actual publication have
 not been verified. Source publication is not npm availability.
 

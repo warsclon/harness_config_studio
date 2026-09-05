@@ -1,7 +1,8 @@
 # Public presentation and demo
 
-The presentation is prepared locally. GitHub Pages has not been deployed. The
-intended URL is `https://warsclon.github.io/harness_config_studio/`.
+The [public presentation and read-only demo](https://warsclon.github.io/harness_config_studio/)
+are deployed on GitHub Pages. Initial deployment and browser verification completed
+on 2026-09-05. The npm release remains a separate, pending phase.
 
 ## Build and preview
 
@@ -54,10 +55,10 @@ and verify those source URLs before announcing the npm package.
    This workflow is manual-only; ordinary pushes do not deploy the website.
 4. Observe the validation and deployment jobs, then verify the returned URL,
    navigation, media, read-only behavior and browser console on the live site.
-5. Replace pending-availability text in this document and README with the verified
-   live link. A documentation change becomes a new npm release candidate and must
-   be qualified accordingly. Site deployment never publishes to npm.
+5. Keep the README and this document aligned with verified availability. A
+   documentation change becomes a new npm release candidate and must be qualified
+   accordingly. Site deployment never publishes to npm.
 
 GitHub's maintained actions document the [Pages artifact format](https://github.com/actions/upload-pages-artifact)
 and [deployment permissions and environment](https://github.com/actions/deploy-pages).
-The workflow is prepared, not evidence of a successful remote deployment.
+Verify the Actions result and the live site after every deployment.
