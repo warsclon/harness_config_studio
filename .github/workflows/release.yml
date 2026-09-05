@@ -1,7 +1,9 @@
 name: Prepare or publish npm release
-run-name: npm candidate ${{ inputs.commit }} (publish=${{ inputs.publish }})
+run-name: npm release ${{ github.event_name == 'push' && github.ref_name || inputs.commit }}
 
 on:
+  push:
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       commit:
@@ -27,10 +29,21 @@ concurrency:
 jobs:
   preflight:
     runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.intent.outputs.commit }}
+      publish: ${{ steps.intent.outputs.publish }}
     steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.commit || github.sha }}
+          fetch-depth: 0
       - name: Validate release intent
+        id: intent
         env:
           SOURCE_COMMIT: ${{ inputs.commit }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          DELETED: ${{ github.event.deleted }}
           PUBLISH: ${{ inputs.publish }}
           APPROVED_SHA256: ${{ inputs.approved_sha256 }}
           PUBLISH_ENABLED: ${{ vars.NPM_PUBLISH_ENABLED }}
@@ -38,11 +51,31 @@ jobs:
         run: |
           node --input-type=module - <<'JS'
           import assert from 'node:assert/strict';
-          assert.match(process.env.SOURCE_COMMIT, /^[a-f0-9]{40}$/);
-          if (process.env.PUBLISH === 'true') {
-            assert.equal(process.env.REPOSITORY, 'warsclon/harness_config_studio');
-            assert.equal(process.env.PUBLISH_ENABLED, 'true', 'Complete maintainer setup before enabling publication');
-            assert.match(process.env.APPROVED_SHA256, /^[a-f0-9]{64}$/);
+          import { execFileSync } from 'node:child_process';
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const env = process.env;
+          const commit = execFileSync('git', ['rev-parse', 'HEAD'], {encoding: 'utf8'}).trim();
+          const tagged = env.EVENT_NAME === 'push';
+          assert.equal(env.REPOSITORY, 'warsclon/harness_config_studio');
+          assert.match(commit, /^[a-f0-9]{40}$/);
+          if (tagged) {
+            assert.notEqual(env.DELETED, 'true', 'Deleted tags cannot publish');
+            assert.match(env.REF_NAME, /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/, 'Use a stable vX.Y.Z tag');
+            const manifest = JSON.parse(readFileSync('package.json'));
+            assert.equal(env.REF_NAME, `v${manifest.version}`, 'Tag and package version differ');
+            execFileSync('git', ['merge-base', '--is-ancestor', commit, 'origin/main']);
+          } else {
+            assert.equal(env.EVENT_NAME, 'workflow_dispatch');
+            assert.equal(env.SOURCE_COMMIT, commit, 'Use the full source commit');
+            if (env.PUBLISH === 'true') {
+              assert.equal(env.PUBLISH_ENABLED, 'true', 'Complete maintainer setup before enabling publication');
+              assert.match(env.APPROVED_SHA256, /^[a-f0-9]{64}$/);
+            }
+          }
+          const publish = tagged || env.PUBLISH === 'true';
+          appendFileSync(env.GITHUB_OUTPUT, `commit=${commit}\npublish=${publish}\n`);
+          if (publish && env.PUBLISH_ENABLED !== 'true') {
+            appendFileSync(env.GITHUB_STEP_SUMMARY, 'Publication disabled: finish npm authentication and set NPM_PUBLISH_ENABLED=true. Validation still runs.\n');
           }
           JS
 
@@ -50,16 +83,18 @@ jobs:
     needs: preflight
     uses: ./.github/workflows/ci.yml
     with:
-      source_ref: ${{ inputs.commit }}
+      source_ref: ${{ needs.preflight.outputs.commit }}
       retain_artifacts: true
 
   inspect:
-    needs: validate
+    needs: [preflight, validate]
+    outputs:
+      sha256: ${{ steps.reconcile.outputs.sha256 }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.commit }}
+          ref: ${{ needs.preflight.outputs.commit }}
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -68,8 +103,9 @@ jobs:
           pattern: candidate-node-*
           path: candidates
       - name: Reconcile the two tested artifacts
+        id: reconcile
         env:
-          SOURCE_COMMIT: ${{ inputs.commit }}
+          SOURCE_COMMIT: ${{ needs.preflight.outputs.commit }}
           APPROVED_SHA256: ${{ inputs.approved_sha256 }}
         run: |
           node scripts/verify-release.mjs candidates/candidate-node-22 "$SOURCE_COMMIT" ${APPROVED_SHA256:+"$APPROVED_SHA256"}
@@ -80,12 +116,13 @@ jobs:
           const a = JSON.parse(readFileSync('candidates/candidate-node-22/evidence.json'));
           const b = JSON.parse(readFileSync('candidates/candidate-node-24/evidence.json'));
           assert.equal(a.tarball.sha256, b.tarball.sha256, 'Node matrices produced different packages');
+          appendFileSync(process.env.GITHUB_OUTPUT, `sha256=${b.tarball.sha256}\n`);
           appendFileSync(process.env.GITHUB_STEP_SUMMARY, `Validated ${b.package.name}@${b.package.version}\n\nCommit: ${b.source.commit}\n\nSHA-256: ${b.tarball.sha256}\n\nReal Finder/Trash and public reporting must be qualified separately before approval.\n`);
           JS
 
   publish:
-    if: ${{ inputs.publish }}
-    needs: inspect
+    if: ${{ needs.preflight.outputs.publish == 'true' && vars.NPM_PUBLISH_ENABLED == 'true' }}
+    needs: [preflight, inspect]
     runs-on: ubuntu-latest
     environment: npm-publish
     permissions:
@@ -94,7 +131,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.commit }}
+          ref: ${{ needs.preflight.outputs.commit }}
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -106,8 +143,8 @@ jobs:
           path: candidate
       - name: Publish only the approved bytes
         env:
-          SOURCE_COMMIT: ${{ inputs.commit }}
-          APPROVED_SHA256: ${{ inputs.approved_sha256 }}
+          SOURCE_COMMIT: ${{ needs.preflight.outputs.commit }}
+          APPROVED_SHA256: ${{ needs.inspect.outputs.sha256 }}
         run: |
           tarball=$(node scripts/verify-release.mjs candidate "$SOURCE_COMMIT" "$APPROVED_SHA256")
           npm publish "$tarball" --access public --ignore-scripts

@@ -76,7 +76,9 @@ change the source commit it refers to.
 - Create the `npm-publish` GitHub environment with required reviewers and restricted
   deployment branches. Verify those protections before setting the repository
   variable `NPM_PUBLISH_ENABLED` to `true`. Preparation works without that variable;
-  a request to publish fails while it is unset.
+  manual publication fails while it is unset; tag runs validate and skip publication.
+  Allow deployment branches `main` and tags `v*` in the environment, retaining
+  the required maintainer approval.
 - The publish job alone receives OIDC write permission. It installs npm 11 on
   Node 24; npm documents OIDC support from npm 11.5.1 and Node 22.14.0. No persistent
   npm write token is part of this workflow. A saved Trusted Publisher configuration
@@ -90,7 +92,16 @@ Recheck requirements before first publication because account/registry flows cha
 
 1. Obtain maintainer authorization for public source, package version, exact commit
    and qualified SHA-256. Creating a ticket or running preparation does not grant it.
-2. For OIDC publication, dispatch the manual release workflow with the same commit,
+2. The normal release trigger is a pushed stable tag `vX.Y.Z` on a commit already
+   integrated into `main`. The tag must match `package.json` exactly (for example,
+   `v0.2.6`). Push the reviewed commit to main first, then create and push that tag.
+   Ordinary main pushes do not trigger npm publication. The tag workflow validates
+   Node 22/24 and presents the tested tarball SHA-256 in the inspection summary.
+   Approve the `npm-publish` environment only after reviewing that exact artifact
+   and its separate native qualification. It publishes the tested bytes without
+   rebuilding. Do not move or recreate an existing release tag.
+
+   Manual preparation/recovery remains available: dispatch the release workflow with the same commit,
    `publish` true, and that SHA-256. The flow revalidates both runtimes, requires
    matching artifact bytes, and then waits at the configured environment approval.
    A different build hash requires a new review, not an automatic approval change.
@@ -103,8 +114,8 @@ Recheck requirements before first publication because account/registry flows cha
    with the approved artifact.
 5. In a clean environment, use the exact published version through `npx` to check
    version, help, read-only Inventory and web startup against disposable fixtures.
-6. Create the version tag and GitHub Release pointing to the published source
-   commit; verify all public repository, documentation and support links. Describe
+6. After successful npm publication, create the GitHub Release for the existing
+   version tag (or create the tag if using the initial local bootstrap route); verify all public repository, documentation and support links. Describe
    provenance only if the registry actually provides it.
 7. Update public installation availability wording after verification. Documentation
    embedded in the already-published tarball cannot be changed in place; keep its
