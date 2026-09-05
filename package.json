@@ -42,7 +42,11 @@
     "pretest": "npm run build",
     "test": "node --test test/*.test.ts && npm run test:package",
     "package:smoke": "node scripts/package-smoke.mjs",
-    "test:package": "node --test test/package/*.test.ts"
+    "test:package": "node --test test/package/*.test.ts",
+    "site:build": "npm run build && node scripts/build-site.mjs",
+    "site:preview": "npm run site:build && node scripts/serve-site.mjs",
+    "site:check": "npm run site:build && node scripts/check-site.mjs",
+    "capture:media": "npm run site:build && node scripts/capture-media.mjs && node scripts/build-site.mjs"
   },
   "files": [
     "dist",

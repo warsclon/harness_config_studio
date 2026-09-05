@@ -36,6 +36,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm test
+      - run: npm run site:check
       - run: npm run package:smoke -- --retain-dir release-artifacts
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         if: ${{ inputs.retain_artifacts }}

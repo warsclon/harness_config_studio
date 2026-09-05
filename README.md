@@ -1,5 +1,36 @@
 # Harness Config Studio
 
+**One local workspace for the instructions, settings and skills across your coding agents and projects.**
+
+Codex · Claude Code · OpenCode · Pi
+
+![Harness Config Studio showing fictional global configuration and AGENTS.md content](https://raw.githubusercontent.com/warsclon/harness_config_studio/main/docs/media/hero.png)
+
+Explore configuration roots, inspect artifact contents, and see which Agent Harnesses
+use each file. In the local app, review changes before saving, preserve backups,
+and move eligible artifacts to macOS Trash.
+
+![A 12-second walkthrough of the read-only demo: global instructions, project configuration, settings and a shared skill](https://raw.githubusercontent.com/warsclon/harness_config_studio/main/docs/media/workflow.gif)
+
+## Explore the demo
+
+A static, read-only demo uses the real interface with fictional configurations.
+It cannot access your files. Browse Codex, Claude Code, OpenCode and Pi roots,
+open example artifacts, filter harnesses and resize the columns.
+Saving, backups, Finder and Trash are available in the local macOS application;
+they are not simulated by the hosted demo.
+
+From this checkout, run `npm ci`, then `npx playwright install chromium` for browser
+checks, and `npm run site:preview` to open the presentation and demo locally.
+The command prints a loopback URL. No deployment is performed.
+
+GitHub Pages deployment is prepared but has not run. Its intended address is
+`https://warsclon.github.io/harness_config_studio/`; add the live demo link here
+once that deployment has been verified. The images above resolve after this
+repository is published. They remain available under `docs/media/` locally.
+
+## Application
+
 Harness Config Studio is a local, deterministic tool for the filesystem
 artifacts that configure Codex, Claude Code, OpenCode, and Pi. Version `0.2.6`
 has two deliberately different surfaces:

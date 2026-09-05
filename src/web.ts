@@ -1,13 +1,26 @@
+import type { InventoryResult } from "./inventory.ts";
+import type { OpenedArtifact } from "./management.ts";
+
+export type WebDemoData = {
+  snapshot: InventoryResult;
+  artifacts: Record<string, OpenedArtifact>;
+};
+
 export function renderWebShell(
   sessionCapability: string,
   productVersion: string,
   hasApplicationDataRoot = false,
   systemManagementSupported = true,
+  demo: WebDemoData | null = null,
 ): string {
+  // Inline data must never terminate the script element, even for example Markdown.
+  const demoJson = JSON.stringify(demo).replaceAll("<", "\\u003c");
+  if (demo) { systemManagementSupported = false; hasApplicationDataRoot = false; }
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  ${demo ? `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'">` : ""}
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
   <meta name="hcs-session-capability" content="${sessionCapability}">
@@ -22,13 +35,33 @@ export function renderWebShell(
     .artifact-list,.artifact-children{margin:0;padding:0;list-style:none}.artifact-list{min-width:300px}.artifact-children{margin-left:14px;border-left:1px solid #e1e6dd}.artifact-node{position:relative}.artifact-row-main{position:relative;border-bottom:1px solid #edf0e9}.artifact-button{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px 86px 10px 12px;border:0;color:var(--ink);background:#fff;text-align:left;cursor:pointer}.artifact-button:hover,.artifact-button[aria-pressed="true"],.directory-button[aria-expanded="true"]{background:#f2f9e5}.artifact-button:disabled{cursor:not-allowed;opacity:.58}.artifact-name{min-width:0;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}.artifact-name-text{min-width:44px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.artifact-path{display:block;margin:4px 0 0 22px;color:var(--muted);font:8px/1.45 ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.memberships{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:3px}.member{padding:3px 4px;border-radius:5px;color:#65705f;background:#eef1e9;font:800 7px ui-monospace,monospace;text-transform:uppercase}.tree-chevron{width:12px;color:#788172;text-align:center;transition:transform .12s}.tree-chevron.open{transform:rotate(90deg)}.tree-chevron.leaf{visibility:hidden}.artifact-type-icon{display:inline-grid;place-items:center;width:17px;height:17px;flex:0 0 17px;border-radius:4px;color:#566151;background:#eef1e9}.artifact-type-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.artifact-type-icon.directory{color:#765a18;background:#fff3c9}.artifact-type-icon.markdown{color:#285d91;background:#e6f2ff}.artifact-type-icon.json{color:#865b0d;background:#fff1d5}.artifact-type-icon.yaml{color:#70458b;background:#f3e9fa}.artifact-type-icon.toml{color:#24684f;background:#e4f5ed}.symlink-icon{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:5px;color:#5d4500;background:var(--amber);font:900 10px ui-monospace,monospace}.symlink-icon.broken{color:#792722;background:var(--red)}.symlink-target{display:block;margin:4px 0 0 39px;color:#735d19;font:8px/1.4 ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.reveal-button,.trash-button{position:absolute;top:7px;width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:#fafbf8;cursor:pointer}.reveal-button{right:9px;color:#465342}.trash-button{right:43px;color:#792722}.reveal-button:hover{background:#eef8dc}.trash-button:hover{background:#fff0ee}.trash-button:disabled{color:#9a9f98;background:#f2f3f1;cursor:not-allowed}.reveal-status{padding:7px 14px;border-bottom:1px solid var(--line);color:#405039;background:#f4f9ec;font-size:9px}.reveal-status.error{color:#792722;background:#fff0ee}.removal-status{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;border-bottom:1px solid var(--line);color:#304b10;background:#eef8dc;font-size:9px}.removal-status.error{color:#792722;background:#fff0ee}.empty{margin:16px;padding:22px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);background:#fafbf8;text-align:center;font-size:11px}
     .detail-body{height:100%;display:flex;flex-direction:column}.detail-empty{height:100%;display:grid;place-items:center;padding:40px;color:var(--muted);text-align:center}.detail-loading{height:100%;display:grid;place-items:center;color:var(--muted)}.detail-error{margin:18px;padding:16px;border:1px solid #e4aaa4;border-radius:10px;color:#792722;background:#fff0ee}.detail-meta{padding:14px 17px;border-bottom:1px solid var(--line);background:#fafbf8}.detail-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.detail-meta h3{margin:0 0 9px;font-size:15px}.close-editor{border:0;color:var(--muted);background:transparent;cursor:pointer}.metadata{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 12px;margin:0}.metadata dt{color:var(--muted);font:800 8px ui-monospace,monospace;text-transform:uppercase}.metadata dd{min-width:0;margin:0;font-size:10px;word-break:break-all}.metadata code{font:9px/1.4 ui-monospace,monospace}.editor{min-height:0;flex:1;display:flex;flex-direction:column;padding:13px}.editor-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px}.editor-bar label{margin:0;color:var(--muted);font:800 9px ui-monospace,monospace;text-transform:uppercase}.editor-actions{display:flex;align-items:center;gap:9px}.editor-status,.cursor-position{color:var(--muted);font:800 8px ui-monospace,monospace}.save-button,.danger-button{padding:6px 9px;border:0;border-radius:7px;color:#fff;font-size:9px;font-weight:800;cursor:pointer}.save-button{background:#304b10}.danger-button{background:#8b2e27}.save-button:disabled,.danger-button:disabled{color:#8b9388;background:#e4e8e0;cursor:not-allowed}.editor textarea{width:100%;min-height:0;flex:1;resize:none;padding:14px;border:1px solid var(--line);border-radius:9px;color:#20281e;background:#fbfcf9;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;tab-size:2}.editor textarea:focus{outline:2px solid #baf34a;outline-offset:1px}.editor-note{display:flex;justify-content:space-between;gap:12px;margin:7px 1px 0;color:var(--muted);font-size:9px}.save-error{margin:0 0 8px;padding:8px;border:1px solid #e4aaa4;border-radius:7px;color:#792722;background:#fff0ee;font-size:9px}.modal-backdrop{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:30px;background:#182019a8}.save-review,.dirty-guard,.removal-review,.help-dialog{width:min(920px,90vw);max-height:88vh;overflow:auto;padding:0;border:1px solid #bec8b8;border-radius:14px;background:#fff;box-shadow:0 24px 80px #0005}.dirty-guard,.removal-review{width:min(700px,90vw)}.help-dialog{width:min(840px,90vw)}.review-head,.review-actions{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 18px}.review-head{border-bottom:1px solid var(--line)}.review-head h2{margin:0;font-size:18px}.review-body{padding:16px 18px}.review-identity{display:block;padding:9px;border-radius:7px;background:#f1f4ed;font:9px ui-monospace,monospace;word-break:break-all}.validation-ready{margin:12px 0;padding:9px;border-radius:7px;color:#304b10;background:#eef8dc;font-weight:800}.skill-warning{padding:11px;border-radius:8px;color:#6d4c00;background:#fff5d5}.review-metadata{display:flex;gap:14px;color:var(--muted);font:9px ui-monospace,monospace}.diff{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.diff section{min-width:0}.diff h3{margin:0 0 5px;font-size:10px}.diff pre{min-height:180px;margin:0;padding:11px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fafbf8;font:10px/1.5 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word}.removal-tree{max-height:190px;margin:12px 0;padding:8px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fafbf8;font:9px/1.6 ui-monospace,monospace}.removal-tree div{padding-left:calc(var(--depth) * 14px)}.typed-confirmation{display:grid;gap:6px;margin-top:14px;font-size:10px;font-weight:800}.typed-confirmation textarea{min-height:42px;padding:9px;resize:vertical;border:1px solid var(--line);border-radius:7px;font:11px ui-monospace,monospace}.review-actions{border-top:1px solid var(--line);justify-content:flex-end}.secondary-button{padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer}.help-body{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px}.help-section{min-width:0;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fafbf8}.help-section h3{margin:0 0 8px;font-size:13px}.help-section p,.help-section li{color:#4f594c;font-size:10px;line-height:1.55}.help-section p{margin:0}.help-section ul{margin:0;padding-left:17px}.help-shortcuts{grid-column:1/-1}.shortcut-list{display:grid;grid-template-columns:max-content 1fr;gap:7px 13px;margin:0}.shortcut-list dt,.shortcut-list dd{margin:0;font-size:10px}.shortcut-list kbd{display:inline-block;min-width:62px;padding:3px 6px;border:1px solid #c8d0c2;border-bottom-width:2px;border-radius:5px;background:#fff;font:800 9px ui-monospace,monospace;text-align:center}.shortcut-list dd{align-self:center;color:#4f594c}
     .tree-toolbar{position:sticky;z-index:2;top:0;display:flex;gap:6px;padding:7px 10px;border-bottom:1px solid var(--line);background:#fafbf8}.tree-toolbar .secondary-button{padding:5px 8px}.artifact-node[aria-selected="true"]>.artifact-row-main>.artifact-button{background:#e8f5d0;outline:2px solid #8ab448;outline-offset:-2px}.artifact-row-main>.reveal-button,.artifact-row-main>.trash-button{opacity:0;z-index:1}.artifact-row-main:hover>.reveal-button,.artifact-row-main:hover>.trash-button,.artifact-row-main:focus-within>.reveal-button,.artifact-row-main:focus-within>.trash-button,.artifact-node[aria-selected="true"]>.artifact-row-main>.reveal-button,.artifact-node[aria-selected="true"]>.artifact-row-main>.trash-button{opacity:1;pointer-events:auto}
+    ${demo ? '.demo-strip{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#baf34a;color:#182019;font-size:12px}.demo-strip a{color:inherit}.demo-strip strong{margin-right:12px}main{height:calc(100vh - 124px)}' : ""}
   </style>
 </head>
 <body data-system-management-supported="${systemManagementSupported}">
-  <header><div class="hero"><div class="brand"><span class="tag">LOCAL · NO LLM</span><div><h1>Harness Config Studio</h1><p>Inventory and explicit Web Management · Version ${productVersion}</p></div></div><div class="top-actions">${hasApplicationDataRoot ? '<button class="top-action" type="button" data-testid="reveal-application-data" disabled>Reveal application data in Finder</button>' : ""}<button class="top-action" type="button" data-testid="help" aria-label="Help and keyboard shortcuts" aria-keyshortcuts="?">? Help</button><button class="top-action" type="button" data-testid="toggle-sections" aria-label="Expand all sections" aria-pressed="false" disabled>Expand all</button><button class="top-action" type="button" data-testid="refresh" disabled>↻ Refresh snapshot</button></div></div></header>
+  ${demo ? '<div class="demo-strip"><span><strong>READ-ONLY DEMO</strong>Fictional data · No access to your files</span><a href="index.html">← Overview</a></div>' : ""}
+  <header><div class="hero"><div class="brand"><span class="tag">${demo ? "DEMO · NO LLM" : "LOCAL · NO LLM"}</span><div><h1>Harness Config Studio</h1><p>${demo ? "Explore example configurations" : "Inventory and explicit Web Management"} · Version ${productVersion}</p></div></div><div class="top-actions">${hasApplicationDataRoot ? '<button class="top-action" type="button" data-testid="reveal-application-data" disabled>Reveal application data in Finder</button>' : ""}<button class="top-action" type="button" data-testid="help" aria-label="Help and keyboard shortcuts" aria-keyshortcuts="?">? Help</button><button class="top-action" type="button" data-testid="toggle-sections" aria-label="Expand all sections" aria-pressed="false" disabled>Expand all</button><button class="top-action" type="button" data-testid="refresh" disabled>↻ Refresh snapshot</button></div></div></header>
   <main id="app" data-state="loading" aria-live="polite"><section class="state"><div><div class="loader"></div><strong>Loading configuration inventory…</strong></div></section></main>
   <script>
   (() => {
+    const demo = ${demoJson};
+    // The demo has no transport to a local server. Only these read operations exist.
+    async function request(url, options = {}) {
+      if (!demo) return fetch(url, options);
+      const body = JSON.parse(options.body || "{}");
+      let payload;
+      let status = 200;
+      if (url === "/api/inventory") payload = demo.snapshot;
+      else if (url === "/api/management/artifacts/open" && Object.hasOwn(demo.artifacts, body.artifactIdentity)) {
+        payload = { ...demo.artifacts[body.artifactIdentity], editability: "view-only", writable: false };
+      } else if (url === "/api/management/inventory/refresh") {
+        payload = { status: "fresh", published: { snapshot: demo.snapshot, generation: 1 } };
+      } else {
+        status = 403;
+        payload = { error: { code: "demo-read-only", message: "The demo cannot write files or run system actions." } };
+      }
+      return new Response(JSON.stringify(payload), { status, headers: { "content-type": "application/json", "x-harness-config-inventory-generation": "1" } });
+    }
     const app = document.querySelector("#app");
     const refreshButton = document.querySelector('[data-testid="refresh"]');
     const sectionToggle = document.querySelector('[data-testid="toggle-sections"]');
@@ -194,7 +227,7 @@ export function renderWebShell(
     function sourceButton(kind, root, artifacts, subtitle) {
       const key = sourceKey(kind, root.path);
       const label = root.name || basename(root.path);
-      return '<div class="source-row"><button type="button" class="source-button" data-source="' + escapeHtml(key) + '" aria-pressed="' + (selectedSource === key) + '"><span><strong>' + symlinkIcon(root) + '<span>' + escapeHtml(label) + '</span></strong><small>' + escapeHtml(subtitle) + '<br>' + escapeHtml(compactPath(root.path, snapshot.home)) + '</small>' + symlinkTarget(root) + '</span><span class="source-count">' + artifacts.length + '</span></button><button type="button" class="source-reveal" data-reveal-source-kind="' + escapeHtml(kind === "global" ? "global-root" : "project-root") + '" data-reveal-source-path="' + escapeHtml(root.path) + '" aria-label="Reveal ' + escapeHtml(label) + ' in Finder"' + systemActionDisabled + '>⌖</button></div>';
+      return '<div class="source-row"><button type="button" class="source-button" data-source="' + escapeHtml(key) + '" aria-pressed="' + (selectedSource === key) + '"><span><strong>' + symlinkIcon(root) + '<span>' + escapeHtml(label) + '</span></strong><small>' + escapeHtml(subtitle) + '<br>' + escapeHtml(compactPath(root.path, snapshot.home)) + '</small>' + symlinkTarget(root) + '</span><span class="source-count">' + artifacts.length + '</span></button>' + (demo ? '' : '<button type="button" class="source-reveal" data-reveal-source-kind="' + escapeHtml(kind === "global" ? "global-root" : "project-root") + '" data-reveal-source-path="' + escapeHtml(root.path) + '" aria-label="Reveal ' + escapeHtml(label) + ' in Finder"' + systemActionDisabled + '>⌖</button>') + '</div>';
     }
 
     function renderSources() {
@@ -401,6 +434,7 @@ export function renderWebShell(
     }
 
     function renderArtifactActions(node) {
+      if (demo) return "";
       const artifact = node.artifact;
       if (!artifact) {
         if (!node.source) return "";
@@ -472,7 +506,7 @@ export function renderWebShell(
     }
 
     function isArtifactEditable() {
-      return openedArtifact?.editability === "editable";
+      return !demo && openedArtifact?.editability === "editable";
     }
 
     function cursorLabel(textarea) {
@@ -493,16 +527,16 @@ export function renderWebShell(
       const note = (dirty ? "Discard or save the pending edit before moving this file to Trash. · " : "")
         + (editable
           ? (openedArtifact.symbolicLink.isSymbolicLink ? "Editing linked target · " : "") + openedArtifact.format + " edit · Cmd/Ctrl+S reviews before writing"
-          : "View-only · File is not writable");
+          : demo ? "Read-only demo · Example content" : "View-only · File is not writable");
       const errorLocation = saveError?.technicalDetails ? ' · Line ' + saveError.technicalDetails.line + ', column ' + saveError.technicalDetails.column : "";
       const error = saveError ? '<p class="save-error" role="alert"><strong>' + escapeHtml(saveError.code) + '</strong> · ' + escapeHtml(saveError.message) + errorLocation + '</p>' : "";
-      const status = !dirty ? "Saved" : withinLimit ? "Unsaved changes" : "Pending Edit too large";
+      const status = !dirty ? (demo ? "Demo" : "Saved") : withinLimit ? "Unsaved changes" : "Pending Edit too large";
       const success = saveStatus ? '<p class="validation-ready" role="status">' + escapeHtml(saveStatus) + '</p>' : "";
       const latest = openedArtifact.recovery?.latestBackup;
       const recovery = '<section data-testid="artifact-recovery"><h4>Recovery</h4>' + (latest
         ? '<dl class="metadata"><dt>Latest backup</dt><dd><code>' + escapeHtml(latest.relativePath) + '</code></dd><dt>Protected revision</dt><dd><code>' + escapeHtml(latest.editRevision) + '</code></dd><dt>Created</dt><dd>' + escapeHtml(latest.createdAt) + '</dd></dl><button type="button" class="secondary-button" data-testid="reveal-latest-backup"' + systemActionDisabled + '>Reveal backup in Finder</button>'
         : '<p>No backup recorded for this artifact</p>') + '</section>';
-      return '<div class="detail-body"><div class="detail-meta"><div class="detail-title"><h3>' + escapeHtml(basename(openedArtifact.artifactIdentity)) + '</h3><button type="button" class="close-editor" data-testid="close-editor" aria-label="Close editor">×</button></div><dl class="metadata"><dt>Artifact Identity</dt><dd><code>' + escapeHtml(openedArtifact.artifactIdentity) + '</code></dd><dt>Format</dt><dd>' + escapeHtml(openedArtifact.format) + '</dd><dt>Encoding</dt><dd>' + (openedArtifact.hasUtf8Bom ? "UTF-8 BOM" : "UTF-8") + '</dd><dt>Scope</dt><dd>' + escapeHtml(scopeLabel(openedArtifact.scope)) + '</dd><dt>Harness Memberships</dt><dd>' + openedArtifact.harnesses.map((id) => escapeHtml(harnessLabels[id] || id)).join(", ") + '</dd><dt>Symbolic link</dt><dd>' + linkLabel + '</dd>' + resolved + '<dt>Edit Revision</dt><dd><code>' + escapeHtml(openedArtifact.editRevision) + '</code></dd></dl>' + recovery + '</div><div class="editor">' + success + error + '<div class="editor-bar"><label for="artifact-content">Artifact content</label><div class="editor-actions"><span class="editor-status" data-testid="editor-status">' + status + '</span><button class="save-button" type="button" data-testid="review-save"' + (editable && dirty && withinLimit && inventoryStatus !== "stale" ? "" : " disabled") + '>Review save</button></div></div><textarea id="artifact-content" aria-label="Artifact content"' + (editable ? "" : " readonly") + ' spellcheck="false">' + escapeHtml(pendingContent ?? openedArtifact.content) + '</textarea><p class="editor-note"><span>' + note + '</span><span class="cursor-position" data-testid="cursor-position">Ln 1, Col 1</span></p></div></div>';
+      return '<div class="detail-body"><div class="detail-meta"><div class="detail-title"><h3>' + escapeHtml(basename(openedArtifact.artifactIdentity)) + '</h3><button type="button" class="close-editor" data-testid="close-editor" aria-label="Close editor">×</button></div><dl class="metadata"><dt>Artifact Identity</dt><dd><code>' + escapeHtml(openedArtifact.artifactIdentity) + '</code></dd><dt>Format</dt><dd>' + escapeHtml(openedArtifact.format) + '</dd><dt>Encoding</dt><dd>' + (openedArtifact.hasUtf8Bom ? "UTF-8 BOM" : "UTF-8") + '</dd><dt>Scope</dt><dd>' + escapeHtml(scopeLabel(openedArtifact.scope)) + '</dd><dt>Harness Memberships</dt><dd>' + openedArtifact.harnesses.map((id) => escapeHtml(harnessLabels[id] || id)).join(", ") + '</dd><dt>Symbolic link</dt><dd>' + linkLabel + '</dd>' + resolved + '<dt>Edit Revision</dt><dd><code>' + escapeHtml(openedArtifact.editRevision) + '</code></dd></dl>' + recovery + '</div><div class="editor">' + success + error + '<div class="editor-bar"><label for="artifact-content">Artifact content</label><div class="editor-actions"><span class="editor-status" data-testid="editor-status">' + status + '</span>' + (demo ? '' : '<button class="save-button" type="button" data-testid="review-save"' + (editable && dirty && withinLimit && inventoryStatus !== "stale" ? "" : " disabled") + '>Review save</button>') + '</div></div><textarea id="artifact-content" aria-label="Artifact content"' + (editable ? "" : " readonly") + ' spellcheck="false">' + escapeHtml(pendingContent ?? openedArtifact.content) + '</textarea><p class="editor-note"><span>' + note + '</span><span class="cursor-position" data-testid="cursor-position">Ln 1, Col 1</span></p></div></div>';
     }
 
     function renderSaveReview() {
@@ -542,6 +576,7 @@ export function renderWebShell(
 
     function renderHelp() {
       if (!helpOpen) return "";
+      if (demo) return '<div class="modal-backdrop"><section class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title"><div class="review-head"><h2 id="help-title">Explore the demo</h2><button type="button" class="secondary-button" data-testid="close-help" aria-label="Close help">Close</button></div><div class="help-body"><p>This demo uses fictional configurations. It cannot access your files.</p><p>Select a Global Root or Project Root, expand directories and open a text artifact. Resize the columns or filter by Agent Harness.</p><p>Saving, backups, Finder and Trash are available in the local macOS application. This demo is read-only.</p><p>Use arrow keys to explore the tree, Enter to open an artifact, and Escape to close help.</p></div></section></div>';
       return '<div class="modal-backdrop"><section class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title"><div class="review-head"><div><p class="eyebrow">Local guide</p><h2 id="help-title">Harness Config Studio help</h2></div><button type="button" class="secondary-button" data-testid="close-help" aria-label="Close help">Close</button></div><div class="help-body">' +
         '<section class="help-section"><h3>How it works</h3><p>Select a Global Root or Project Root, then explore its recognized Agent Configuration Artifacts. Inventory lists metadata only; file content is loaded explicitly when you open an eligible file.</p></section>' +
         '<section class="help-section"><h3>Artifact Explorer</h3><ul><li>Roots begin expanded; nested directories begin collapsed.</li><li>Use Expand all or Collapse all for the current tree.</li><li>File and directory icons show the artifact kind. The link badge marks symbolic links, and complete truncated names appear on hover.</li><li>Drag either column boundary to resize adjacent columns.</li></ul></section>' +
@@ -866,7 +901,7 @@ export function renderWebShell(
       saveStatus = null;
       renderReady();
       try {
-        const response = await fetch("/api/management/artifacts/open", {
+        const response = await request("/api/management/artifacts/open", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({ artifactIdentity }),
@@ -892,7 +927,7 @@ export function renderWebShell(
       revealStatus = { message: "Asking Finder…", error: false };
       renderReady();
       try {
-        const response = await fetch("/api/management/reveal", {
+        const response = await request("/api/management/reveal", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({ target }),
@@ -923,7 +958,7 @@ export function renderWebShell(
       removalStatus = effectiveKind === "managed-skill-directory" ? { message: "Scanning directory…", error: false, moved: false } : null;
       renderReady();
       try {
-        const response = await fetch("/api/management/removals/preview", {
+        const response = await request("/api/management/removals/preview", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({ artifactIdentity }),
@@ -954,7 +989,7 @@ export function renderWebShell(
       removalInFlight = true;
       renderReady();
       try {
-        const response = await fetch("/api/management/removals/apply", {
+        const response = await request("/api/management/removals/apply", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({ removalReviewId: review.removalReviewId, ...(confirmationName === undefined ? {} : { confirmationName }) }),
@@ -1001,7 +1036,7 @@ export function renderWebShell(
 
     async function openTrash() {
       try {
-        const response = await fetch("/api/management/trash/open", {
+        const response = await request("/api/management/trash/open", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: "{}",
@@ -1018,7 +1053,7 @@ export function renderWebShell(
       if (!openedArtifact || !hasPendingEdit() || !pendingEditWithinLimit() || reviewingSave || inventoryStatus === "stale") return;
       reviewingSave = true;
       try {
-        const response = await fetch("/api/management/saves/review", {
+        const response = await request("/api/management/saves/review", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({
@@ -1046,7 +1081,7 @@ export function renderWebShell(
       const confirmButton = app.querySelector('[data-testid="confirm-save"]');
       if (confirmButton) confirmButton.disabled = true;
       try {
-        const response = await fetch("/api/management/saves/apply", {
+        const response = await request("/api/management/saves/apply", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({ reviewId: review.reviewId }),
@@ -1101,7 +1136,7 @@ export function renderWebShell(
     async function load() {
       renderLoading();
       try {
-        const response = await fetch("/api/inventory", { cache: "no-store" });
+        const response = await request("/api/inventory", { cache: "no-store" });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.error?.message || "Unable to load inventory");
         snapshot = payload;
@@ -1132,7 +1167,7 @@ export function renderWebShell(
         renderLoading();
       }
       try {
-        const response = await fetch("/api/management/inventory/refresh", {
+        const response = await request("/api/management/inventory/refresh", {
           method: "POST",
           headers: { "content-type": "application/json", "x-harness-config-capability": capability },
           body: JSON.stringify({ reason }),

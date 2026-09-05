@@ -1,0 +1,521 @@
+{
+  "snapshot": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-01-01T00:00:00.000Z",
+    "home": "/demo/home",
+    "workspace": "/demo/projects",
+    "harnesses": [
+      {
+        "id": "codex",
+        "status": "found"
+      },
+      {
+        "id": "claude",
+        "status": "found"
+      },
+      {
+        "id": "opencode",
+        "status": "found"
+      },
+      {
+        "id": "pi",
+        "status": "found"
+      }
+    ],
+    "globalRoots": [
+      {
+        "harnesses": [
+          "codex",
+          "opencode",
+          "pi"
+        ],
+        "path": "/demo/home/.agents",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "claude",
+          "opencode"
+        ],
+        "path": "/demo/home/.claude",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex"
+        ],
+        "path": "/demo/home/.codex",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "opencode"
+        ],
+        "path": "/demo/home/.config/opencode",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "pi"
+        ],
+        "path": "/demo/home/.pi/agent",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      }
+    ],
+    "artifacts": [
+      {
+        "harnesses": [
+          "codex",
+          "opencode",
+          "pi"
+        ],
+        "category": "skills",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.agents"
+        },
+        "path": "/demo/home/.agents/skills",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex",
+          "opencode",
+          "pi"
+        ],
+        "category": "skills",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.agents"
+        },
+        "path": "/demo/home/.agents/skills/code-review",
+        "kind": "directory",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex",
+          "opencode",
+          "pi"
+        ],
+        "category": "skills",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.agents"
+        },
+        "path": "/demo/home/.agents/skills/code-review/SKILL.md",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "claude",
+          "opencode"
+        ],
+        "category": "instructions",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.claude"
+        },
+        "path": "/demo/home/.claude/CLAUDE.md",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex"
+        ],
+        "category": "instructions",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.codex"
+        },
+        "path": "/demo/home/.codex/AGENTS.md",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex"
+        ],
+        "category": "settings",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.codex"
+        },
+        "path": "/demo/home/.codex/config.toml",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "opencode"
+        ],
+        "category": "settings",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.config/opencode"
+        },
+        "path": "/demo/home/.config/opencode/opencode.json",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "pi"
+        ],
+        "category": "instructions",
+        "scope": {
+          "kind": "global",
+          "root": "/demo/home/.pi/agent"
+        },
+        "path": "/demo/home/.pi/agent/AGENTS.md",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "claude"
+        ],
+        "category": "settings",
+        "scope": {
+          "kind": "project",
+          "projectRoot": "/demo/projects/atlas-web",
+          "directory": "/demo/projects/atlas-web"
+        },
+        "path": "/demo/projects/atlas-web/.claude/settings.json",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex",
+          "opencode",
+          "pi"
+        ],
+        "category": "instructions",
+        "scope": {
+          "kind": "project",
+          "projectRoot": "/demo/projects/atlas-web",
+          "directory": "/demo/projects/atlas-web"
+        },
+        "path": "/demo/projects/atlas-web/AGENTS.md",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      {
+        "harnesses": [
+          "codex",
+          "opencode",
+          "pi"
+        ],
+        "category": "instructions",
+        "scope": {
+          "kind": "project",
+          "projectRoot": "/demo/projects/orbit-api",
+          "directory": "/demo/projects/orbit-api"
+        },
+        "path": "/demo/projects/orbit-api/AGENTS.md",
+        "kind": "file",
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      }
+    ],
+    "projectRoots": [
+      {
+        "name": "atlas-web",
+        "path": "/demo/projects/atlas-web",
+        "detectedBy": [
+          ".git",
+          "AGENTS.md",
+          ".claude/settings.json"
+        ],
+        "scopes": []
+      },
+      {
+        "name": "orbit-api",
+        "path": "/demo/projects/orbit-api",
+        "detectedBy": [
+          ".git",
+          "AGENTS.md"
+        ],
+        "scopes": []
+      }
+    ],
+    "warnings": []
+  },
+  "artifacts": {
+    "/demo/home/.codex/AGENTS.md": {
+      "artifactIdentity": "/demo/home/.codex/AGENTS.md",
+      "content": "# Working together\n\nKeep changes focused and explain the result.\n\n## Development\n\n- Use the vocabulary in CONTEXT.md.\n- Run focused tests before the full suite.\n- Review the diff before committing.\n\n## Privacy\n\nAll paths and contents in this demo are fictional.\n",
+      "editRevision": "db91bd3c3b41dc3ce83602c9db75359d26cababd5005eabc0905ed80fe0f32a1",
+      "format": "Markdown",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "global",
+        "root": "/demo/home/.codex"
+      },
+      "harnesses": [
+        "codex"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/home/.codex/config.toml": {
+      "artifactIdentity": "/demo/home/.codex/config.toml",
+      "content": "# Fictional example configuration\nmodel = \"example-model\"\napproval_policy = \"on-request\"\n",
+      "editRevision": "264a9d83213280bb3c310c33d00d22f8bdc47f3b5e7c0bd7f824064f29316f0d",
+      "format": "TOML",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "global",
+        "root": "/demo/home/.codex"
+      },
+      "harnesses": [
+        "codex"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/home/.claude/CLAUDE.md": {
+      "artifactIdentity": "/demo/home/.claude/CLAUDE.md",
+      "content": "# Claude Code instructions\n\nPrefer clear interfaces and small changes.\n",
+      "editRevision": "07330eca8e18ad93f088995e6f63e7c397349e25e579f623aaacca212070d1d9",
+      "format": "Markdown",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "global",
+        "root": "/demo/home/.claude"
+      },
+      "harnesses": [
+        "claude",
+        "opencode"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/home/.agents/skills/code-review/SKILL.md": {
+      "artifactIdentity": "/demo/home/.agents/skills/code-review/SKILL.md",
+      "content": "---\nname: code-review\ndescription: Review a focused code change.\n---\n\n# Code review\n\nCheck behavior, boundaries, and test coverage.\n",
+      "editRevision": "c564c30eb63beab4136bae0389a07025a7acd392229641f8d7ab04e29902825d",
+      "format": "Markdown",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "global",
+        "root": "/demo/home/.agents"
+      },
+      "harnesses": [
+        "codex",
+        "opencode",
+        "pi"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/home/.config/opencode/opencode.json": {
+      "artifactIdentity": "/demo/home/.config/opencode/opencode.json",
+      "content": "{\n  \"theme\": \"system\"\n}\n",
+      "editRevision": "0e29e3c37f18176e1213224412ab3e578e74e37309637b784c27d4c32ea9c644",
+      "format": "JSON",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "global",
+        "root": "/demo/home/.config/opencode"
+      },
+      "harnesses": [
+        "opencode"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/home/.pi/agent/AGENTS.md": {
+      "artifactIdentity": "/demo/home/.pi/agent/AGENTS.md",
+      "content": "# Pi instructions\n\nInspect the project before proposing a change.\n",
+      "editRevision": "d5128b02fc5ac645273970526e038b9ffb6ec8e267b5d0932e0968249088a5ef",
+      "format": "Markdown",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "global",
+        "root": "/demo/home/.pi/agent"
+      },
+      "harnesses": [
+        "pi"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/projects/atlas-web/AGENTS.md": {
+      "artifactIdentity": "/demo/projects/atlas-web/AGENTS.md",
+      "content": "# Atlas Web\n\nA fictional design system workspace.\n\n## Conventions\n\nUse accessible controls and meaningful names.\n",
+      "editRevision": "3f3cc21af98ca9b09a45bf40b5050f143622c5d06cba9c9e224e07ad004495ae",
+      "format": "Markdown",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "project",
+        "projectRoot": "/demo/projects/atlas-web",
+        "directory": "/demo/projects/atlas-web"
+      },
+      "harnesses": [
+        "codex",
+        "opencode",
+        "pi"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/projects/atlas-web/.claude/settings.json": {
+      "artifactIdentity": "/demo/projects/atlas-web/.claude/settings.json",
+      "content": "{\n  \"permissions\": {\n    \"allow\": []\n  }\n}\n",
+      "editRevision": "ee6d1034985be06dde6005c06f88905313a86b286452e8756a977a6cdf55fcbb",
+      "format": "JSON",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "project",
+        "projectRoot": "/demo/projects/atlas-web",
+        "directory": "/demo/projects/atlas-web"
+      },
+      "harnesses": [
+        "claude"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    },
+    "/demo/projects/orbit-api/AGENTS.md": {
+      "artifactIdentity": "/demo/projects/orbit-api/AGENTS.md",
+      "content": "# Orbit API\n\nA fictional service workspace.\n\n## Conventions\n\nValidate inputs at the boundary.\n",
+      "editRevision": "adc72c3442d9df5c977d8d457f8c1c3dae5678aff33261074f933091236e3e97",
+      "format": "Markdown",
+      "editability": "view-only",
+      "editabilityReason": null,
+      "hasUtf8Bom": false,
+      "newlineByteOverheadMap": "",
+      "newlineStyle": "lf",
+      "scope": {
+        "kind": "project",
+        "projectRoot": "/demo/projects/orbit-api",
+        "directory": "/demo/projects/orbit-api"
+      },
+      "harnesses": [
+        "codex",
+        "opencode",
+        "pi"
+      ],
+      "symbolicLink": {
+        "isSymbolicLink": false,
+        "resolvedPath": null,
+        "brokenLink": false
+      },
+      "writable": false,
+      "editHandle": "demo-example"
+    }
+  }
+}
