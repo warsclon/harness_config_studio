@@ -41,9 +41,19 @@ has two deliberately different surfaces:
 - `harness-config` starts the loopback Web Management UI for a human to inspect,
   edit, reveal, and move eligible artifacts to the macOS Trash.
 
-This repository is the clean public release candidate for version `0.2.6`.
-The npm package has not been published yet, so installation by package name and
-`npx` remain unavailable until the first release is explicitly approved.
+Version `0.2.6` is [published on npm](https://www.npmjs.com/package/harness-config-studio)
+with GitHub Actions provenance. Run it without a permanent installation:
+
+```bash
+npx harness-config-studio@0.2.6
+```
+
+Or install the command globally:
+
+```bash
+npm install -g harness-config-studio
+harness-config
+```
 
 ## Requirements and local use
 

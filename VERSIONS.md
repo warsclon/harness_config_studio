@@ -12,9 +12,8 @@ symbolic-link metadata without reading content or mutating the filesystem.
 
 ## 0.2.6 — Artifact Explorer Web Management and Help
 
-Version `0.2.6` is the first public release candidate. It is prepared for npm
-distribution but remains unavailable by package name until publication is
-explicitly authorized.
+Version `0.2.6` is the first public npm release, published from GitHub Actions
+on September 5, 2026. Run it with `npx harness-config-studio@0.2.6`.
 
 The default web launcher provides three resizable desktop columns and a
 hierarchical Artifact Explorer. It identifies files and directories, exposes

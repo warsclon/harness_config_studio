@@ -1,7 +1,7 @@
 # Harness Config Studio 0.2.6
 
-This is the first public release candidate. The source repository can be
-reviewed before any npm publication, Git tag, or GitHub Release is authorized.
+The first public npm release was published from GitHub Actions on September 5,
+2026, from tag `v0.2.6`, with provenance. Run `npx harness-config-studio@0.2.6`.
 
 ## Added
 
@@ -48,7 +48,6 @@ reviewed before any npm publication, Git tag, or GitHub Release is authorized.
 ## Known limitations
 
 - Finder, Trash, and filesystem mutations are supported only on macOS.
-- The package is not yet published for `npx` installation.
 - There is no in-app restore, undo, backup content browser, or permanent artifact
   deletion.
 - The app provides no LLM analysis, telemetry, or outbound service integration.

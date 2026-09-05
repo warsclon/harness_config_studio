@@ -2,7 +2,7 @@
 
 The public product source is `warsclon/harness_config_studio`. Keep development
 history and prototypes from the private repository out of this repository.
-The current candidate remains `harness-config-studio@0.2.6`; its command is
+The first published version is `harness-config-studio@0.2.6`; its command is
 `harness-config`. An unpublished candidate may be corrected without bumping its
 version. Never overwrite an already published npm version.
 
@@ -11,8 +11,10 @@ version. Never overwrite an already published npm version.
 The source repository is public and GitHub Private Vulnerability Reporting is
 enabled. The presentation and read-only demo are available on
 [GitHub Pages](https://warsclon.github.io/harness_config_studio/). The npm release
-workflow is prepared, but npm ownership/authentication and actual publication have
-not been verified. Source publication is not npm availability.
+workflow published `harness-config-studio@0.2.6` from tag `v0.2.6` on September 5,
+2026. Registry bytes match the approved tarball and provenance is present.
+The first publication used a temporary token; Trusted Publishing setup and its
+first successful OIDC release are separate follow-up steps.
 
 ## Prepare and qualify
 
