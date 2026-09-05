@@ -61,18 +61,24 @@ change the source commit it refers to.
   the right to publish the selected package name. Check name/version availability
   immediately before publishing. A registry E404 is not a reservation or proof of
   ownership; fail closed on authentication or network errors.
-- A new package may need its initial authenticated interactive publication before
-  its package settings expose Trusted Publisher configuration. Verify npm's current
-  account flow; do not publish a placeholder package merely to unlock settings.
-- If interactive first publication is required, use `npm login` with the maintainer's
-  account and required 2FA, finish the same qualification and explicit approval,
-  then pass the verified tarball to `npm publish --access public --ignore-scripts`.
-  Do not publish the working directory or rebuild between verification and upload.
-  Do not store credentials in the repository, logs or release evidence.
+- The initial `harness-config-studio@0.2.6` publication can run from GitHub using a
+  short-lived granular npm token with publish permissions and Bypass 2FA. Store it
+  only as the `NPM_BOOTSTRAP_TOKEN` secret in the `npm-publish` environment. Set the
+  repository variable `NPM_AUTH_MODE=bootstrap` to select this one-time path.
+  The token is available only to the bootstrap publish step after environment
+  approval. That step verifies the approved artifact and refuses to publish if
+  the package already exists, the version differs, or the registry check fails.
+  It requests provenance and disables lifecycle scripts. Never copy a local login
+  credential into the workflow or print the token in logs.
 - Once package settings are available, configure a GitHub Trusted Publisher for
   owner `warsclon`, repository `harness_config_studio`, workflow `release.yml`, and
   environment `npm-publish`. Permit direct publication only if that is the selected
   maintainer flow; this workflow does not implement npm staging.
+- After the first successful publication, configure Trusted Publishing, set
+  `NPM_AUTH_MODE=oidc`, revoke the temporary token in npm, and delete the GitHub
+  environment secret. Deleting a GitHub secret alone does not revoke the token.
+  Verify OIDC on the next release; bootstrap success proves token authentication,
+  not Trusted Publishing authentication.
 - Create the `npm-publish` GitHub environment with required reviewers and restricted
   deployment branches. Verify those protections before setting the repository
   variable `NPM_PUBLISH_ENABLED` to `true`. Preparation works without that variable;
