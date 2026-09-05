@@ -102,6 +102,7 @@ test("tree keyboard navigation selects without opening, guards Pending Edits, an
     assert.equal(await page.getByRole("textbox", { name: "Artifact content" }).count(), 0);
     await row(".codex/AGENTS.md").press("Enter");
     const editor = page.getByRole("textbox", { name: "Artifact content" });
+    await editor.waitFor({ state: "visible" });
     await row(".codex/AGENTS.md").press("ArrowDown");
     assert.equal(await node(".codex/config.toml").getAttribute("aria-selected"), "true");
     await editor.fill("# Pending\n");
