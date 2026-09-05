@@ -11,9 +11,10 @@ execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' });
 const output = fileURLToPath(new URL('../docs/media/', import.meta.url));
 await mkdir(output, { recursive: true });
 const frames = await mkdtemp(join(tmpdir(), 'hcs-media-'));
-const running = await startSitePreview();
-const browser = await chromium.launch({ headless: true });
+let running, browser;
 try {
+  running = await startSitePreview();
+  browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 1 });
   await page.goto(running.url + 'demo.html');
   await page.locator('#app[data-state="ready"]').waitFor();
@@ -35,4 +36,4 @@ try {
   }
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '1/3', '-i', join(frames, 'frame-%d.png'), '-filter_complex', 'scale=1080:-1:flags=lanczos,split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer', '-loop', '0', join(output, 'workflow.gif')]);
   console.log('Captured hero.png, workspace.png and a 12-second workflow.gif from the real demo.');
-} finally { await browser.close(); await running.close(); await rm(frames, { recursive: true, force: true }); }
+} finally { await browser?.close(); await running?.close(); await rm(frames, { recursive: true, force: true }); }

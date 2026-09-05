@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { createServer } from 'node:http';
+import { createServer, request } from 'node:http';
+import { startSitePreview } from '../scripts/serve-site.mjs';
 import { chromium } from 'playwright';
 import test from 'node:test';
 import { renderWebShell } from '../src/web.ts';
@@ -46,4 +47,17 @@ test('static demo uses the real explorer without network, native controls or wri
     assert.deepEqual(errors,[]);
     assert.deepEqual(requests.filter(x=>x!='/favicon.ico'),['/harness_config_studio/demo.html']);
   } finally {await browser.close();await new Promise<void>((resolve,reject)=>server.close(e=>e?reject(e):resolve()));}
+});
+
+
+test('presentation preview rejects malformed URLs and continues serving requests', async () => {
+  const running = await startSitePreview();
+  try {
+    const status = await new Promise<number | undefined>((resolve, reject) => {
+      const call = request(running.url, { path: '//[' }, response => { response.resume(); resolve(response.statusCode); });
+      call.on('error', reject);call.setTimeout(2000, () => call.destroy(new Error('Preview timed out')));call.end();
+    });
+    assert.equal(status, 400);
+    assert.equal((await fetch(running.url + 'unknown')).status, 404);
+  } finally { await running.close(); }
 });

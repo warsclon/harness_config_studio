@@ -1,17 +1,19 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { startSitePreview } from './serve-site.mjs';
 
 const demoPath = new URL('../_site/demo.html', import.meta.url);
 const before = await readFile(demoPath, 'utf8');
-execFileSync(process.execPath, [new URL('./build-site.mjs', import.meta.url).pathname]);
+execFileSync(process.execPath, [fileURLToPath(new URL('./build-site.mjs', import.meta.url))]);
 assert.equal(await readFile(demoPath, 'utf8'), before, 'Demo build must be deterministic');
 assert.doesNotMatch(before, /\/Users\/|\/private\/|\/home\/runner|hcs-presentation-/);
-const running = await startSitePreview('/harness_config_studio/');
-const browser = await chromium.launch({ headless: true });
+let running, browser;
 try {
+  running = await startSitePreview('/harness_config_studio/');
+  browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
   const errors = [], requests = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -37,4 +39,4 @@ try {
   assert.ok(requests.every(url => url.startsWith(running.url)), 'No external network resources');
   assert.ok(requests.every(url => !url.includes('/api/')), 'Demo must not request an API');
   console.log('Site passed: deterministic demo, prefixed links, images, read-only explorer, no API/external resources, mobile landing.');
-} finally { await browser.close(); await running.close(); }
+} finally { await browser?.close(); await running?.close(); }

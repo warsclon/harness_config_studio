@@ -5,7 +5,9 @@ import { pathToFileURL } from 'node:url';
 const files = new Set(['index.html', 'demo.html', 'media/hero.png', 'media/workspace.png', 'media/workflow.gif']);
 export async function startSitePreview(prefix = '/', port = 0) {
   const server = createServer(async (request, response) => {
-    const path = new URL(request.url, 'http://localhost').pathname;
+    let path;
+    try { path = new URL(request.url, 'http://localhost').pathname; }
+    catch { response.writeHead(400); response.end('Invalid request URL'); return; }
     const name = path.startsWith(prefix) ? path.slice(prefix.length) || 'index.html' : '';
     if (!files.has(name)) { response.writeHead(404); response.end(); return; }
     try {
