@@ -2,13 +2,14 @@
 
 Package SemVer and Inventory schema version are separate contracts. The package
 manifest is the only source of product version. Inventory remains
-`schemaVersion: 1` in both releases below.
+`schemaVersion: 1` across the releases below.
 
-## 0.2.7 — Rules, scripts and Claude hooks (candidate)
+## 0.2.7 — Rules, scripts and Claude hooks
 
 Adds eleven text extensions and global/project Claude hook discovery, retaining
 Save Review, backups, encoding and permission preservation. No script execution
-or syntax validation is added. Publication and OIDC verification are pending.
+or syntax validation is added. Published on September 6, 2026, through GitHub Actions with OIDC and verified
+provenance. Run `npx harness-config-studio@0.2.7`.
 
 ## 0.1.x — Inventory
 

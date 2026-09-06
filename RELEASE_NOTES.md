@@ -1,6 +1,7 @@
 # Harness Config Studio 0.2.7
 
-Release candidate: publication is pending maintainer approval and verification.
+Published on September 6, 2026, from tag `v0.2.7` through GitHub Actions
+Trusted Publishing (OIDC). Run `npx harness-config-studio@0.2.7`.
 
 ## Added
 
@@ -17,7 +18,10 @@ Release candidate: publication is pending maintainer approval and verification.
 
 ## Validation and publishing
 
-Release qualification runs on Node 22 and 24. Publication uses the existing version-tag workflow and required approval with OIDC; it does not use the revoked bootstrap token. OIDC success must be verified on the actual release.
+Release qualification passed on Node 22 and 24. The version-tag workflow published
+with OIDC after maintainer approval, without the revoked bootstrap token. Registry
+bytes match the approved artifact; provenance identifies the release workflow, tag
+and source commit. Public installation and format/hook browser tests passed.
 
 ---
 

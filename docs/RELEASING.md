@@ -14,8 +14,12 @@ enabled. The presentation and read-only demo are available on
 workflow published `harness-config-studio@0.2.6` from tag `v0.2.6` on September 5,
 2026. Registry bytes match the approved tarball and provenance is present.
 The first publication used a temporary token, now revoked. Trusted Publishing
-is configured with `NPM_AUTH_MODE=oidc`; the first successful OIDC release remains
-to be verified. The current candidate is `0.2.7`.
+is configured with `NPM_AUTH_MODE=oidc`. The first successful OIDC release,
+`0.2.7`, was published from tag `v0.2.7` on September 6, 2026, in
+[run 34021303279](https://github.com/warsclon/harness_config_studio/actions/runs/34021303279).
+The registry tarball matches the approved SHA-256
+`733940c3e67b939ab8e282e351b4c98a21028c5355fde5c71d3d9a33275686e8`;
+provenance and public installation were verified.
 
 ## Prepare and qualify
 

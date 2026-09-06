@@ -41,11 +41,11 @@ has two deliberately different surfaces:
 - `harness-config` starts the loopback Web Management UI for a human to inspect,
   edit, reveal, and move eligible artifacts to the macOS Trash.
 
-Version `0.2.6` is [published on npm](https://www.npmjs.com/package/harness-config-studio)
+Version `0.2.7` is [published on npm](https://www.npmjs.com/package/harness-config-studio)
 with GitHub Actions provenance. Run it without a permanent installation:
 
 ```bash
-npx harness-config-studio@0.2.6
+npx harness-config-studio@0.2.7
 ```
 
 Or install the command globally:
@@ -55,9 +55,9 @@ npm install -g harness-config-studio
 harness-config
 ```
 
-The current source includes the `0.2.7` candidate with Rules/script editing and
-Claude hook discovery. The npm command above installs the verified `0.2.6` release
-until the new version is published.
+Version `0.2.7` includes Rules/script editing and Claude hook discovery.
+It was published through GitHub Actions Trusted Publishing (OIDC), with verified
+provenance and package integrity.
 
 ## Requirements and local use
 
