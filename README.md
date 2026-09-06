@@ -123,9 +123,11 @@ the tree without implicitly loading file content. Use the header Help button or
 press `?` outside a text field for the workflow guide and complete shortcut list.
 
 Content is loaded only after an explicit artifact selection. The native editor
-supports UTF-8 `md`, `txt`, `json`, `jsonc`, `toml`, `yaml`, and `yml` files up
+supports UTF-8 `md`, `txt`, `json`, `jsonc`, `toml`, `yaml`, `yml`, `rules`,
+`py`, `ts`, `js`, `mjs`, `cjs`, `mts`, `cts`, `sh`, `bash`, and `zsh` files up
 to one MiB. JSON is syntax-validated before Save Review; the other formats are
-preserved without parsing or reformatting.
+preserved without parsing or reformatting. Scripts and Rules are never executed
+or syntax-validated. File permissions, including executable bits, are retained.
 
 Saving requires an explicit diff review, an unchanged byte revision, a retained
 backup, and an atomic same-directory replacement. Backups and a metadata-only

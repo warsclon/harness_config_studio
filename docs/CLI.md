@@ -63,3 +63,8 @@ read-only and portable within the supported Node.js runtime.
 
 Existing backups in `~/harness_config_studio` remain untouched. New backups and
 activity records use `~/.harness_config_studio`. There is no automatic migration.
+
+Web Management also supports Rules, Python, JavaScript/TypeScript (including
+module variants), and shell scripts: `.rules`, `.py`, `.ts`, `.js`, `.mjs`, `.cjs`,
+`.mts`, `.cts`, `.sh`, `.bash`, `.zsh`. They are UTF-8 text only, at most one MiB,
+with no execution or syntax validation. Inventory and the CLI remain read-only.
