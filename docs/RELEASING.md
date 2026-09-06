@@ -13,8 +13,9 @@ enabled. The presentation and read-only demo are available on
 [GitHub Pages](https://warsclon.github.io/harness_config_studio/). The npm release
 workflow published `harness-config-studio@0.2.6` from tag `v0.2.6` on September 5,
 2026. Registry bytes match the approved tarball and provenance is present.
-The first publication used a temporary token; Trusted Publishing setup and its
-first successful OIDC release are separate follow-up steps.
+The first publication used a temporary token, now revoked. Trusted Publishing
+is configured with `NPM_AUTH_MODE=oidc`; the first successful OIDC release remains
+to be verified. The current candidate is `0.2.7`.
 
 ## Prepare and qualify
 

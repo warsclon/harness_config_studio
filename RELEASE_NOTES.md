@@ -1,3 +1,26 @@
+# Harness Config Studio 0.2.7
+
+Release candidate: publication is pending maintainer approval and verification.
+
+## Added
+
+- View and edit Rules, Python, JavaScript, TypeScript and shell artifacts, including module variants: `.rules`, `.py`, `.ts`, `.js`, `.mjs`, `.cjs`, `.mts`, `.cts`, `.sh`, `.bash`, `.zsh`.
+- Discover Claude hooks in global and project configuration, including nested script files.
+- Format labels, explicit syntax-not-validated messaging and supported-extension guidance.
+
+## Preserved behavior
+
+- Scripts are edited as UTF-8 text and never executed or reformatted.
+- Save Review, exact pre-save backups, executable permissions, BOM and line endings remain preserved.
+- One-MiB limit, read-only CLI, Inventory schema version 1 and symbolic-link boundaries remain unchanged.
+- General source discovery, syntax highlighting and language validation are outside this release.
+
+## Validation and publishing
+
+Release qualification runs on Node 22 and 24. Publication uses the existing version-tag workflow and required approval with OIDC; it does not use the revoked bootstrap token. OIDC success must be verified on the actual release.
+
+---
+
 # Harness Config Studio 0.2.6
 
 The first public npm release was published from GitHub Actions on September 5,

@@ -1,6 +1,6 @@
 # CLI contract for agents
 
-Harness Config Studio `0.2.6` keeps the command line deterministic,
+Harness Config Studio `0.2.7` keeps the command line deterministic,
 Inventory-only, and read-only. Structured commands never open a browser, prompt
 for input, read configuration content, or mutate the filesystem.
 
@@ -30,7 +30,7 @@ scan failure exits non-zero; partial scans exit zero with structured warnings.
 
 Compatibility guarantees:
 
-- `schemaVersion` remains `1`; it is independent from package version `0.2.6`.
+- `schemaVersion` remains `1`; it is independent from package version `0.2.7`.
 - Paths are normalized and absolute.
 - Symbolic-link fields are explicit.
 - Shared configuration appears once with `harnesses[]` memberships.
@@ -63,3 +63,11 @@ read-only and portable within the supported Node.js runtime.
 
 Existing backups in `~/harness_config_studio` remain untouched. New backups and
 activity records use `~/.harness_config_studio`. There is no automatic migration.
+
+Web Management also supports Rules, Python, JavaScript/TypeScript (including
+module variants), and shell scripts: `.rules`, `.py`, `.ts`, `.js`, `.mjs`, `.cjs`,
+`.mts`, `.cts`, `.sh`, `.bash`, `.zsh`. They are UTF-8 text only, at most one MiB,
+with no execution or syntax validation. Inventory and the CLI remain read-only.
+
+Claude global and project hook directories are inventoried as `hooks` artifacts.
+Discovery reads metadata only; it never executes hooks or resolves their commands.

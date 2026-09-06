@@ -1,6 +1,6 @@
 {
   "name": "harness-config-studio",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Local CLI and web studio for managing Codex, Claude Code, OpenCode, and Pi configuration artifacts.",
   "keywords": [
     "ai-agents",

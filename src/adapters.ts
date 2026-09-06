@@ -96,7 +96,7 @@ export const PROJECT_ARTIFACTS: ProjectArtifactPattern[] = [
     harnesses: ["claude"],
     source: "https://code.claude.com/docs/en/settings",
   },
-  ...(["agents", "commands"] as const).map(
+  ...(["agents", "commands", "hooks"] as const).map(
     (name): ProjectArtifactPattern => ({
       relativePath: `.claude/${name}`,
       category: name,
@@ -272,7 +272,7 @@ const GLOBAL_ROOT_DEFINITIONS: GlobalRootDefinition[] = [
         category: "settings",
         source: "https://docs.anthropic.com/en/docs/claude-code/settings",
       },
-      ...(["agents", "commands", "skills"] as const).map((name) => ({
+      ...(["agents", "commands", "skills", "hooks"] as const).map((name) => ({
         relativePath: name,
         category: name,
         recursive: true,

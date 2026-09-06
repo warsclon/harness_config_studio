@@ -4,19 +4,19 @@ import { extname } from "node:path";
 
 export const MAX_EDITABLE_BYTES = 1_048_576;
 
-export type EditableFormat = "markdown" | "plain-text" | "json" | "jsonc" | "toml" | "yaml";
+export type EditableFormat = "markdown" | "plain-text" | "json" | "jsonc" | "toml" | "yaml" | "rules" | "python" | "typescript" | "javascript" | "shell";
 export type NewlineStyle = "lf" | "crlf" | "mixed";
 export type LineEnding = "\n" | "\r\n" | "\r";
 
 export type FormatPolicy = {
   id: EditableFormat;
-  label: "Markdown" | "Plain text" | "JSON" | "JSONC" | "TOML" | "YAML";
+  label: "Markdown" | "Plain text" | "JSON" | "JSONC" | "TOML" | "YAML" | "Rules" | "Python" | "TypeScript" | "JavaScript" | "Shell";
 };
 
 export type EditValidation =
   | { status: "not-required"; message: "No validation required" }
   | { status: "valid"; message: "Valid JSON" }
-  | { status: "not-performed"; message: "Not validated; content will be preserved exactly" };
+  | { status: "not-performed"; message: "Not validated; content will be preserved exactly" | "Syntax not validated; content will be preserved exactly" };
 
 export type EncodingPolicy = {
   hasUtf8Bom: boolean;
@@ -70,7 +70,20 @@ const FORMAT_BY_EXTENSION = new Map<string, FormatPolicy>([
   [".toml", { id: "toml", label: "TOML" }],
   [".yaml", { id: "yaml", label: "YAML" }],
   [".yml", { id: "yaml", label: "YAML" }],
+  [".rules", { id: "rules", label: "Rules" }],
+  [".py", { id: "python", label: "Python" }],
+  [".ts", { id: "typescript", label: "TypeScript" }],
+  [".js", { id: "javascript", label: "JavaScript" }],
+  [".mjs", { id: "javascript", label: "JavaScript" }],
+  [".cjs", { id: "javascript", label: "JavaScript" }],
+  [".mts", { id: "typescript", label: "TypeScript" }],
+  [".cts", { id: "typescript", label: "TypeScript" }],
+  [".sh", { id: "shell", label: "Shell" }],
+  [".bash", { id: "shell", label: "Shell" }],
+  [".zsh", { id: "shell", label: "Shell" }],
 ]);
+
+export const SUPPORTED_EDITABLE_EXTENSIONS = [...FORMAT_BY_EXTENSION.keys()].join(", ");
 
 export function formatPolicyFor(artifactIdentity: string): FormatPolicy | undefined {
   return FORMAT_BY_EXTENSION.get(extname(artifactIdentity).toLowerCase());
@@ -184,6 +197,9 @@ export function encodePendingEdit(content: string, encoding: EncodingPolicy): Bu
 export function validatePendingEdit(format: EditableFormat, content: string): EditValidation {
   if (format === "markdown" || format === "plain-text") {
     return { status: "not-required", message: "No validation required" };
+  }
+  if (["rules", "python", "typescript", "javascript", "shell"].includes(format)) {
+    return { status: "not-performed", message: "Syntax not validated; content will be preserved exactly" };
   }
   if (format !== "json") {
     return { status: "not-performed", message: "Not validated; content will be preserved exactly" };

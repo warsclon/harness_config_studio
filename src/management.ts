@@ -18,6 +18,7 @@ import {
   encodePendingEdit,
   formatPolicyFor,
   MAX_EDITABLE_BYTES,
+  SUPPORTED_EDITABLE_EXTENSIONS,
   readEditableBytes,
   validatePendingEdit,
   type EditValidation,
@@ -387,7 +388,7 @@ async function inspectArtifact(
   }
 
   const format = formatPolicyFor(artifact.path);
-  if (!format) throw new ManagementError(415, "format-unsupported", "The selected artifact format is not supported.");
+  if (!format) throw new ManagementError(415, "format-unsupported", `The selected artifact format is not supported. Supported extensions: ${SUPPORTED_EDITABLE_EXTENSIONS}. Use Reveal in Finder to open it elsewhere.`);
 
   const visibleInfo = await lstat(artifact.path).catch(() => undefined);
   if (!visibleInfo || visibleInfo.isSymbolicLink() !== artifact.isSymbolicLink) {

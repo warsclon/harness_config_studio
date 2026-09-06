@@ -33,7 +33,7 @@ for media regeneration and GitHub Pages deployment.
 ## Application
 
 Harness Config Studio is a local, deterministic tool for the filesystem
-artifacts that configure Codex, Claude Code, OpenCode, and Pi. Version `0.2.6`
+artifacts that configure Codex, Claude Code, OpenCode, and Pi. Version `0.2.7`
 has two deliberately different surfaces:
 
 - `harness-config inventory` is a read-only CLI that emits the unchanged
@@ -54,6 +54,10 @@ Or install the command globally:
 npm install -g harness-config-studio
 harness-config
 ```
+
+The current source includes the `0.2.7` candidate with Rules/script editing and
+Claude hook discovery. The npm command above installs the verified `0.2.6` release
+until the new version is published.
 
 ## Requirements and local use
 
@@ -123,9 +127,11 @@ the tree without implicitly loading file content. Use the header Help button or
 press `?` outside a text field for the workflow guide and complete shortcut list.
 
 Content is loaded only after an explicit artifact selection. The native editor
-supports UTF-8 `md`, `txt`, `json`, `jsonc`, `toml`, `yaml`, and `yml` files up
+supports UTF-8 `md`, `txt`, `json`, `jsonc`, `toml`, `yaml`, `yml`, `rules`,
+`py`, `ts`, `js`, `mjs`, `cjs`, `mts`, `cts`, `sh`, `bash`, and `zsh` files up
 to one MiB. JSON is syntax-validated before Save Review; the other formats are
-preserved without parsing or reformatting.
+preserved without parsing or reformatting. Scripts and Rules are never executed
+or syntax-validated. File permissions, including executable bits, are retained.
 
 Saving requires an explicit diff review, an unchanged byte revision, a retained
 backup, and an atomic same-directory replacement. Backups and a metadata-only
@@ -178,3 +184,7 @@ must not already exist. See [the release procedure](docs/RELEASING.md) and
 [security reporting status](SECURITY.md).
 
 Harness Config Studio is available under the [MIT License](LICENSE).
+
+Claude hook scripts in `~/.claude/hooks` and project `.claude/hooks` directories
+are included recursively in Inventory. Linked directories are not traversed.
+The app does not resolve hook command strings or discover arbitrary source files.

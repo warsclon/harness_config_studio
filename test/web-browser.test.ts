@@ -243,7 +243,7 @@ test("Markdown editing stays browser-local and exposes a dirty editor state", as
   }
 });
 
-test("the seven Editable Artifact formats share one exact Open Review Apply flow", async () => {
+test("all supported Editable Artifact formats share one exact Open Review Apply flow", async () => {
   const fixtureRoot = await mkdtemp(join(tmpdir(), "harness-config-format-policy-"));
   const home = join(fixtureRoot, "home");
   const workspace = join(fixtureRoot, "workspace");
@@ -257,6 +257,17 @@ test("the seven Editable Artifact formats share one exact Open Review Apply flow
     { name: "sample.toml", content: "this is deliberately = dubious = toml\n", validation: "Not validated; content will be preserved exactly" },
     { name: "sample.yaml", content: ": deliberately: [dubious\n", validation: "Not validated; content will be preserved exactly" },
     { name: "sample.YmL", content: "also: [dubious\n", validation: "Not validated; content will be preserved exactly" },
+    { name: "sample.rules", content: "# preserved source\n  deliberately unvalidated\n", format: "Rules", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.py", content: "# preserved source\n  deliberately unvalidated\n", format: "Python", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.ts", content: "# preserved source\n  deliberately unvalidated\n", format: "TypeScript", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.js", content: "# preserved source\n  deliberately unvalidated\n", format: "JavaScript", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.mjs", content: "# preserved source\n  deliberately unvalidated\n", format: "JavaScript", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.cjs", content: "# preserved source\n  deliberately unvalidated\n", format: "JavaScript", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.mts", content: "# preserved source\n  deliberately unvalidated\n", format: "TypeScript", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.cts", content: "# preserved source\n  deliberately unvalidated\n", format: "TypeScript", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.sh", content: "# preserved source\n  deliberately unvalidated\n", format: "Shell", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.bash", content: "# preserved source\n  deliberately unvalidated\n", format: "Shell", validation: "Syntax not validated; content will be preserved exactly" },
+    { name: "sample.ZsH", content: "# preserved source\n  deliberately unvalidated\n", format: "Shell", validation: "Syntax not validated; content will be preserved exactly" },
   ] as const;
 
   try {
@@ -278,16 +289,26 @@ test("the seven Editable Artifact formats share one exact Open Review Apply flow
       for (const entry of cases) {
         await page.getByText(entry.name, { exact: true }).click();
         const editor = page.getByRole("textbox", { name: "Artifact content" });
+        await editor.waitFor();
         assert.equal(await editor.isEditable(), true, entry.name);
+        assert.equal(await editor.inputValue(), "original\n");
+        if ("format" in entry) await page.locator(".detail-meta").getByText(entry.format, { exact: true }).waitFor();
         await editor.fill(entry.content);
         await page.getByRole("button", { name: "Review save" }).click();
         const review = page.getByRole("dialog", { name: "Save Review" });
         assert.equal(await review.getByTestId("save-validation").innerText(), entry.validation);
+        assert.equal(await readFile(join(policyRoot, entry.name), "utf8"), "original\n");
         const applyResponse = page.waitForResponse((response) => response.url().endsWith("/api/management/saves/apply"));
         await review.getByRole("button", { name: "Confirm save" }).click();
         assert.equal((await applyResponse).status(), 200);
         assert.equal(await readFile(join(policyRoot, entry.name), "utf8"), entry.content);
       }
+      const backupRoot = join(home, ".harness_config_studio", "backups");
+      const backups = (await readdir(backupRoot, { recursive: true })).filter(name => name.endsWith(".bak"));
+      assert.equal(backups.length, cases.length);
+      for (const backup of backups) assert.equal(await readFile(join(backupRoot, backup), "utf8"), "original\n");
+      const journal = JSON.parse(await readFile(join(home, ".harness_config_studio", "activity.json"), "utf8"));
+      assert.equal(journal.records.filter((record: { action: string }) => record.action === "save").length, cases.length);
     } finally {
       await browser.close();
       await running.close();
@@ -304,12 +325,12 @@ test("Editable Artifact open enforces exact byte UTF-8 BOM and NUL boundaries", 
   const projectRoot = join(workspace, "project");
   const policyRoot = join(projectRoot, ".agents", "skills", "policy");
   const paths = {
-    exact: join(policyRoot, "exact.txt"),
-    unicode: join(policyRoot, "unicode.txt"),
-    tooLarge: join(policyRoot, "too-large.txt"),
-    bom: join(policyRoot, "bom.txt"),
-    malformed: join(policyRoot, "malformed.txt"),
-    binary: join(policyRoot, "binary.txt"),
+    exact: join(policyRoot, "exact.py"),
+    unicode: join(policyRoot, "unicode.py"),
+    tooLarge: join(policyRoot, "too-large.py"),
+    bom: join(policyRoot, "bom.py"),
+    malformed: join(policyRoot, "malformed.py"),
+    binary: join(policyRoot, "binary.py"),
   };
 
   try {
@@ -333,15 +354,15 @@ test("Editable Artifact open enforces exact byte UTF-8 BOM and NUL boundaries", 
       await page.getByRole("button", { name: /project.*Project Root/i }).click();
       await page.getByRole("button", { name: "Expand all artifact directories", exact: true }).click();
 
-      await page.getByText("exact.txt", { exact: true }).click();
+      await page.getByText("exact.py", { exact: true }).click();
       assert.equal((await page.getByRole("textbox", { name: "Artifact content" }).inputValue()).length, 1_048_576);
       await page.getByTestId("close-editor").click();
 
-      await page.getByText("unicode.txt", { exact: true }).click();
+      await page.getByText("unicode.py", { exact: true }).click();
       assert.equal((await page.getByRole("textbox", { name: "Artifact content" }).inputValue()).length, 524_288);
       await page.getByTestId("close-editor").click();
 
-      for (const [name, status, code] of [["too-large.txt", 413, "artifact-too-large"], ["malformed.txt", 415, "artifact-not-utf8"], ["binary.txt", 415, "artifact-binary"]] as const) {
+      for (const [name, status, code] of [["too-large.py", 413, "artifact-too-large"], ["malformed.py", 415, "artifact-not-utf8"], ["binary.py", 415, "artifact-binary"]] as const) {
         const openResponse = page.waitForResponse((candidate) => candidate.url().endsWith("/api/management/artifacts/open"));
         await page.getByText(name, { exact: true }).click();
         assert.equal((await openResponse).status(), status);
@@ -351,7 +372,7 @@ test("Editable Artifact open enforces exact byte UTF-8 BOM and NUL boundaries", 
         assert.doesNotMatch(await page.getByTestId("management-detail").innerText(), /BINARY_SECRET/);
       }
 
-      await page.getByText("bom.txt", { exact: true }).click();
+      await page.getByText("bom.py", { exact: true }).click();
       const editor = page.getByRole("textbox", { name: "Artifact content" });
       assert.equal(await editor.inputValue(), "original\n");
       assert.match(await page.getByTestId("management-detail").innerText(), /UTF-8 BOM/);
@@ -722,10 +743,10 @@ test("visible identity controls symlink format while broken outside and unsuppor
   const policyRoot = join(projectRoot, ".agents", "skills", "policy");
   const targetA = join(projectRoot, "target-without-extension");
   const targetB = join(projectRoot, "second-target");
-  const editableLink = join(policyRoot, "visible.txt");
+  const editableLink = join(policyRoot, "visible.ts");
   const outsideTarget = join(fixtureRoot, "OUTSIDE_SECRET.txt");
-  const outsideLink = join(policyRoot, "outside.txt");
-  const brokenLink = join(policyRoot, "broken.txt");
+  const outsideLink = join(policyRoot, "outside.ts");
+  const brokenLink = join(policyRoot, "broken.ts");
   const unsupported = join(policyRoot, "unsupported.bin");
 
   try {
@@ -750,9 +771,9 @@ test("visible identity controls symlink format while broken outside and unsuppor
       await page.getByRole("button", { name: /project.*Project Root/i }).click();
       await page.getByRole("button", { name: "Expand all artifact directories", exact: true }).click();
 
-      await page.getByText("visible.txt", { exact: true }).click();
+      await page.getByText("visible.ts", { exact: true }).click();
       assert.equal(await page.getByRole("textbox", { name: "Artifact content" }).inputValue(), "first target\n");
-      assert.match(await page.getByTestId("management-detail").innerText(), /Plain text/);
+      assert.match(await page.getByTestId("management-detail").innerText(), /TypeScript/);
       await page.getByRole("textbox", { name: "Artifact content" }).fill("pending\n");
       await rm(editableLink);
       await symlink(targetB, editableLink);
@@ -767,8 +788,8 @@ test("visible identity controls symlink format while broken outside and unsuppor
       await page.getByRole("dialog", { name: "Unsaved changes" }).getByRole("button", { name: "Discard" }).click();
 
       for (const [name, status, code, secret] of [
-        ["outside.txt", 403, "artifact-outside-boundary", "OUTSIDE_SECRET"],
-        ["broken.txt", 422, "artifact-not-editable", "OUTSIDE_SECRET"],
+        ["outside.ts", 403, "artifact-outside-boundary", "OUTSIDE_SECRET"],
+        ["broken.ts", 422, "artifact-not-editable", "OUTSIDE_SECRET"],
         ["unsupported.bin", 415, "format-unsupported", "UNSUPPORTED_SECRET"],
       ] as const) {
         const openResponse = page.waitForResponse((candidate) => candidate.url().endsWith("/api/management/artifacts/open"));
@@ -777,6 +798,7 @@ test("visible identity controls symlink format while broken outside and unsuppor
         const body = await rejected.text();
         assert.equal(rejected.status(), status);
         assert.equal(JSON.parse(body).error.code, code);
+        if (code === "format-unsupported") assert.match(JSON.parse(body).error.message, /Supported extensions:.*\.rules.*\.py.*\.ts/);
         assert.doesNotMatch(body, new RegExp(secret));
         assert.equal(await page.getByRole("textbox", { name: "Artifact content" }).count(), 0);
         assert.equal(await page.getByRole("button", { name: `Reveal ${name} in Finder` }).isEnabled(), true);
