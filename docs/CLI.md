@@ -1,6 +1,6 @@
 # CLI contract for agents
 
-Harness Config Studio `0.2.6` keeps the command line deterministic,
+Harness Config Studio `0.2.7` keeps the command line deterministic,
 Inventory-only, and read-only. Structured commands never open a browser, prompt
 for input, read configuration content, or mutate the filesystem.
 
@@ -30,7 +30,7 @@ scan failure exits non-zero; partial scans exit zero with structured warnings.
 
 Compatibility guarantees:
 
-- `schemaVersion` remains `1`; it is independent from package version `0.2.6`.
+- `schemaVersion` remains `1`; it is independent from package version `0.2.7`.
 - Paths are normalized and absolute.
 - Symbolic-link fields are explicit.
 - Shared configuration appears once with `harnesses[]` memberships.

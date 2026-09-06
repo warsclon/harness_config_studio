@@ -4,6 +4,12 @@ Package SemVer and Inventory schema version are separate contracts. The package
 manifest is the only source of product version. Inventory remains
 `schemaVersion: 1` in both releases below.
 
+## 0.2.7 — Rules, scripts and Claude hooks (candidate)
+
+Adds eleven text extensions and global/project Claude hook discovery, retaining
+Save Review, backups, encoding and permission preservation. No script execution
+or syntax validation is added. Publication and OIDC verification are pending.
+
 ## 0.1.x — Inventory
 
 The original private release provided deterministic filesystem Inventory in the

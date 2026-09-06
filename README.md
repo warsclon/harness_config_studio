@@ -33,7 +33,7 @@ for media regeneration and GitHub Pages deployment.
 ## Application
 
 Harness Config Studio is a local, deterministic tool for the filesystem
-artifacts that configure Codex, Claude Code, OpenCode, and Pi. Version `0.2.6`
+artifacts that configure Codex, Claude Code, OpenCode, and Pi. Version `0.2.7`
 has two deliberately different surfaces:
 
 - `harness-config inventory` is a read-only CLI that emits the unchanged
@@ -54,6 +54,10 @@ Or install the command globally:
 npm install -g harness-config-studio
 harness-config
 ```
+
+The current source includes the `0.2.7` candidate with Rules/script editing and
+Claude hook discovery. The npm command above installs the verified `0.2.6` release
+until the new version is published.
 
 ## Requirements and local use
 
