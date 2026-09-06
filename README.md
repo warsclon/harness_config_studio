@@ -180,3 +180,7 @@ must not already exist. See [the release procedure](docs/RELEASING.md) and
 [security reporting status](SECURITY.md).
 
 Harness Config Studio is available under the [MIT License](LICENSE).
+
+Claude hook scripts in `~/.claude/hooks` and project `.claude/hooks` directories
+are included recursively in Inventory. Linked directories are not traversed.
+The app does not resolve hook command strings or discover arbitrary source files.
