@@ -4,6 +4,12 @@ Package SemVer and Inventory schema version are separate contracts. The package
 manifest is the only source of product version. Inventory remains
 `schemaVersion: 1` across the releases below.
 
+## 0.2.8 — Codex global skills (candidate)
+
+Discovers skills in the Codex global root `~/.codex/skills`, including bundled
+`.system` skills, as global Codex-only artifacts. Managed-skill removal still
+excludes dot-prefixed directories. Publication is pending.
+
 ## 0.2.7 — Rules, scripts and Claude hooks
 
 Adds eleven text extensions and global/project Claude hook discovery, retaining
