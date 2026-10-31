@@ -225,6 +225,12 @@ const GLOBAL_ROOT_DEFINITIONS: GlobalRootDefinition[] = [
         recursive: true,
         source: "https://github.com/openai/codex/blob/main/codex-rs/tui/src/custom_prompts.rs",
       },
+      {
+        relativePath: "skills",
+        category: "skills",
+        recursive: true,
+        source: "https://learn.chatgpt.com/docs/build-skills",
+      },
     ],
   },
   {
