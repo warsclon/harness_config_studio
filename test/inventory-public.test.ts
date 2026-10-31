@@ -775,6 +775,8 @@ test("Codex and Claude inventory their complete supported configuration catalogs
     [join(home, ".codex", "AGENTS.override.md"), "instructions"],
     [join(home, ".codex", "rules", "safe.rules"), "rules"],
     [join(home, ".codex", "prompts", "review.md"), "prompts"],
+    [join(home, ".codex", "skills", "review", "SKILL.md"), "skills"],
+    [join(home, ".codex", "skills", ".system", "imagegen", "SKILL.md"), "skills"],
     [join(home, ".claude", "CLAUDE.md"), "instructions"],
     [join(home, ".claude", "agents", "review.md"), "agents"],
     [join(home, ".claude", "commands", "test.md"), "commands"],
@@ -821,6 +823,10 @@ test("Codex and Claude inventory their complete supported configuration catalogs
     assert.deepEqual(
       memberships.get(canonical(join(home, ".claude", "CLAUDE.md"))),
       ["claude", "opencode"],
+    );
+    assert.deepEqual(
+      memberships.get(canonical(join(home, ".codex", "skills", "review", "SKILL.md"))),
+      ["codex"],
     );
     assert.deepEqual(
       memberships.get(canonical(join(home, ".claude", "skills"))),
