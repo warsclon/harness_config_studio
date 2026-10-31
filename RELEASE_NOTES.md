@@ -1,3 +1,23 @@
+# Harness Config Studio 0.2.8 (candidate)
+
+Not yet published. Publication through GitHub Actions Trusted Publishing (OIDC)
+from tag `v0.2.8` is pending maintainer approval.
+
+## Fixed
+
+- Discover Codex global skills in `~/.codex/skills`, including the bundled
+  `.system` skills. Previously only `~/.agents/skills` was inventoried for Codex,
+  so these skills were missing from Inventory and the web app (#7).
+
+## Preserved behavior
+
+- Skills are global-scope artifacts with Codex-only Harness Membership.
+- Managed-skill removal still refuses dot-prefixed directories such as `.system`.
+- `~/.agents/skills` discovery, runtime exclusions, the read-only CLI and
+  Inventory schema version 1 remain unchanged.
+
+---
+
 # Harness Config Studio 0.2.7
 
 Published on September 6, 2026, from tag `v0.2.7` through GitHub Actions
