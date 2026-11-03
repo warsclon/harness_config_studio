@@ -1,7 +1,7 @@
-# Harness Config Studio 0.2.8 (candidate)
+# Harness Config Studio 0.2.8
 
-Not yet published. Publication through GitHub Actions Trusted Publishing (OIDC)
-from tag `v0.2.8` is pending maintainer approval.
+Published on November 3, 2026, from tag `v0.2.8` through GitHub Actions
+Trusted Publishing (OIDC). Run `npx harness-config-studio@0.2.8`.
 
 ## Fixed
 
@@ -15,6 +15,18 @@ from tag `v0.2.8` is pending maintainer approval.
 - Managed-skill removal still refuses dot-prefixed directories such as `.system`.
 - `~/.agents/skills` discovery, runtime exclusions, the read-only CLI and
   Inventory schema version 1 remain unchanged.
+
+## Validation and publishing
+
+Release qualification passed on Node 22 and 24. The version-tag workflow published
+with OIDC after maintainer approval. Registry bytes match the approved artifact;
+provenance identifies the release workflow, tag and source commit. Public `npx`
+version, help, read-only Inventory and web startup were checked with a disposable
+home directory.
+
+The package text published in `0.2.8` still describes this release as a candidate,
+and its `SECURITY.md` still says the first npm release is pending. Both are out of
+date and will be corrected in the next published version.
 
 ---
 
