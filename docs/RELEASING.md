@@ -19,7 +19,12 @@ is configured with `NPM_AUTH_MODE=oidc`. The first successful OIDC release,
 [run 34021303279](https://github.com/warsclon/harness_config_studio/actions/runs/34021303279).
 The registry tarball matches the approved SHA-256
 `733940c3e67b939ab8e282e351b4c98a21028c5355fde5c71d3d9a33275686e8`;
-provenance and public installation were verified. The current candidate is `0.2.8`.
+provenance and public installation were verified. The latest release, `0.2.8`, was
+published from tag `v0.2.8` on November 3, 2026, in
+[run 41728142981](https://github.com/warsclon/harness_config_studio/actions/runs/41728142981).
+The registry tarball matches the approved SHA-256
+`bbe476b1f38ceb4ff485de7443bcd7f181872ffb82165f294c3fc7ea598935be`;
+provenance and public installation were verified. No candidate is currently open.
 
 ## Prepare and qualify
 

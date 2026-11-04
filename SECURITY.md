@@ -9,5 +9,16 @@ Provide the affected commit or package version, Node.js version, operating syste
 reproduction steps using fictitious data, and the expected impact. Never include
 real credentials or personal Agent Configuration Artifacts.
 
-The source is public. The first npm release is still pending; no supported public
-npm version has been announced yet.
+## Supported versions
+
+Only the latest published minor version receives security fixes.
+
+| Version | Supported |
+| ------- | --------- |
+| 0.2.x   | Yes       |
+| < 0.2   | No        |
+
+## Verifying a package
+
+Published versions carry npm provenance. After installing the package, verify its
+registry signatures and attestations with `npm audit signatures`.

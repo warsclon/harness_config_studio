@@ -4,11 +4,12 @@ Package SemVer and Inventory schema version are separate contracts. The package
 manifest is the only source of product version. Inventory remains
 `schemaVersion: 1` across the releases below.
 
-## 0.2.8 — Codex global skills (candidate)
+## 0.2.8 — Codex global skills
 
 Discovers skills in the Codex global root `~/.codex/skills`, including bundled
 `.system` skills, as global Codex-only artifacts. Managed-skill removal still
-excludes dot-prefixed directories. Publication is pending.
+excludes dot-prefixed directories. Published on November 3, 2026, through GitHub
+Actions with OIDC and verified provenance. Run `npx harness-config-studio@0.2.8`.
 
 ## 0.2.7 — Rules, scripts and Claude hooks
 
